@@ -1,0 +1,5052 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SPACE INVITERS Game Gokil</title>
+    <meta name="viewport" content="user-scalable=no" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="text/javascript" src="sounds.js"></script>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script type="text/javascript">
+      /****
+	DESCRIPTION:
+	Tilt your device to move right and left.
+	(Desktop: Right and left keyboard arrows).
+	Tap the screen to fire.
+	(Desktop: Left mouse button).
+	(IMPORTANT: There is a chance to not shoot, just continue fireing).
+	////////
+	Game created by (K137).
+	CREDITS:
+	Many thanks to RNO for help with graphics and scenario. (https://www.behance.net/olha-ostroushko).
+	Loop: SkanerSoft YouTube channel. (https://www.youtube.com/channel/UCOTSosw_E-Cr88QkAb1Mdsg).
+	Idea: The Coding Train YouTube channel. (https://www.youtube.com/channel/UCvjgXvBlbQiydffZU7m1_aw).
+	Sounds: Bfxr program. (https://www.bfxr.net/).
+	Original game: Space Invaders 1978 (https://en.wikipedia.org/wiki/Space_Invaders).
+	****/
+      "use strict";
+      var fontMap = [
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 0, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 0, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 0, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [1, 1, 1, 1, 1, 1, 0],
+            [1, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 1],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 0, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 0, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 0, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 0, 1, 1, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [1, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 1],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 0, 1, 1, 1, 0, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 1, 1, 1, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
+      ];
+      var maps = [
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 2, 1, 2, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 2, 1, 1, 1, 2, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 2, 1, 2, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 2, 1, 2, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 2, 1, 1, 2, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 2, 1, 1, 2, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+            [0, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 0],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 2, 1, 1, 2, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 0, 0, 0],
+            [0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0],
+            [0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+            [0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0],
+            [0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 2, 1, 1, 2, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 2, 1, 1, 2, 1, 1, 0, 0, 0, 0],
+            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+          ],
+        },
+        {
+          tiles: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+          ],
+        },
+      ];
+      var game,
+        q,
+        qu,
+        Q,
+        isFire = false,
+        PI = Math.PI;
+      var width = window.innerWidth;
+      var height = window.innerHeight;
+      var canvas = document.getElementById("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      var context = canvas.getContext("2d");
+      var colors = [
+        "#42988D",
+        "#522F93",
+        "#BE235C",
+        "#F36621",
+        "#E8E6E7",
+        "#ED008C",
+        "#0071BD",
+        "#FCE000",
+        "#35B846",
+        "#EB1E25",
+        "#8E2993",
+        "#7FCB9D",
+        "#B89762",
+        "#F9B814",
+        "#8DC73F",
+        "#1EBED6",
+        "rgba(122, 92, 154, .3)",
+        "rgba(236, 189, 227, .3)",
+        "rgba(248, 254, 205, .3)",
+        "rgba(242, 190, 98, .3)",
+        "rgba(127, 218, 236, .3)",
+        "rgba(255, 209, 1, .3)",
+        "rgba(255, 223, 185, .3)",
+        "rgba(241, 201, 201, .3)",
+        "rgba(234, 236, 254, .3)",
+        "rgba(205, 202, 230, .3)",
+        "#000000",
+        "#ffffff",
+        "rgba(193, 91, 200, .1)",
+        "rgba(55, 3, 67, .1)",
+        "rgba(71, 0, 142, .1)",
+        "#fefe2e",
+        "#fd9b1e",
+        "#fd5f1e",
+      ];
+      //setup
+      var lives = 10;
+      var score = 0;
+      var w = 5;
+      var ship = new SpaceShip();
+      ship.grid.create(maps[4]);
+      var mines = [];
+      var rockets = [];
+      var inviters = [];
+      var cc = 6;
+      var rc = 2;
+      var offset = 10;
+      var explosions = [];
+      var flashes = [];
+      for (var q = 0; q < cc; q += 1) {
+        inviters[q] = [];
+        for (var qu = 0; qu < rc; qu += 1) {
+          inviters[q][qu] = new Inviter(
+            offset * q + w * 9 * q,
+            offset * qu + w * 9 * qu,
+            colors[0]
+          );
+          inviters[q][qu].grid.create(maps[0]);
+        }
+      }
+      function msgBg() {
+        form(
+          50,
+          50,
+          100,
+          50,
+          105,
+          55,
+          width - 105,
+          55,
+          width - 100,
+          50,
+          width - 50,
+          50,
+          width - 10,
+          60,
+          width - 20,
+          80,
+          width - 20,
+          height - 80,
+          width - 10,
+          height - 60,
+          width - 50,
+          height - 50,
+          width - 100,
+          height - 50,
+          width - 105,
+          height - 55,
+          105,
+          height - 55,
+          100,
+          height - 50,
+          50,
+          height - 50,
+          10,
+          height - 60,
+          20,
+          height - 80,
+          20,
+          80,
+          10,
+          60,
+          10,
+          "rgba(193, 91, 200, .3)"
+        );
+        form(
+          50,
+          50,
+          100,
+          50,
+          105,
+          55,
+          width - 105,
+          55,
+          width - 100,
+          50,
+          width - 50,
+          50,
+          width - 10,
+          60,
+          width - 20,
+          80,
+          width - 20,
+          height - 80,
+          width - 10,
+          height - 60,
+          width - 50,
+          height - 50,
+          width - 100,
+          height - 50,
+          width - 105,
+          height - 55,
+          105,
+          height - 55,
+          100,
+          height - 50,
+          50,
+          height - 50,
+          10,
+          height - 60,
+          20,
+          height - 80,
+          20,
+          80,
+          10,
+          60,
+          false,
+          false,
+          "rgba(71, 0, 142, .5)"
+        );
+        form(
+          50,
+          50,
+          100,
+          50,
+          105,
+          55,
+          width - 105,
+          55,
+          width - 100,
+          50,
+          width - 50,
+          50,
+          width - 10,
+          60,
+          width - 20,
+          80,
+          width - 20,
+          height - 80,
+          width - 10,
+          height - 60,
+          width - 50,
+          height - 50,
+          width - 100,
+          height - 50,
+          width - 105,
+          height - 55,
+          105,
+          height - 55,
+          100,
+          height - 50,
+          50,
+          height - 50,
+          10,
+          height - 60,
+          20,
+          height - 80,
+          20,
+          80,
+          10,
+          60,
+          5,
+          "rgba(71, 0, 142, .5)"
+        );
+      }
+      var buttons = [];
+      var s = new Text(180, 100, 10, colors[8], "space");
+      var ssh = new Text(182, 102, 10, colors[10], "space");
+      var i0 = new Text(100, 180, 10, colors[8], "i");
+      var i0sh = new Text(102, 182, 10, colors[10], "i");
+      var nv = new Text(150, 180, 10, colors[8], "nv");
+      var nvsh = new Text(152, 182, 10, colors[10], "nv");
+      var i1 = new Text(270, 180, 10, colors[8], "i");
+      var i1sh = new Text(272, 182, 10, colors[10], "i");
+      var ters = new Text(320, 180, 10, colors[8], "ters");
+      var terssh = new Text(322, 182, 10, colors[10], "ters");
+      var tg = new Text(300, 250, 4, colors[8], "the ga");
+      var tgsh = new Text(302, 252, 4, colors[10], "the ga");
+      var m0 = new Text(472, 250, 4, colors[8], "m");
+      var m0sh = new Text(474, 252, 4, colors[10], "m");
+      var e0 = new Text(504, 250, 4, colors[8], "e");
+      var e0sh = new Text(506, 252, 4, colors[10], "e");
+      var btn0, sjsh, sj;
+      w = 5;
+      var btnin0 = new Inviter(100, 325, colors[5]);
+      btnin0.grid.create(maps[5]);
+      var btnin1 = new Inviter(180, 355, colors[15]);
+      btnin1.grid.create(maps[15]);
+      var btnin2 = new Inviter(120, 405, colors[8]);
+      btnin2.grid.create(maps[8]);
+      function menu() {
+        clear();
+        background();
+        msgBg();
+        ssh.draw();
+        s.draw();
+        i0sh.draw();
+        i0.draw();
+        nvsh.draw();
+        nv.draw();
+        i1sh.draw();
+        i1.draw();
+        terssh.draw();
+        ters.draw();
+        tgsh.draw();
+        tg.draw();
+        m0sh.draw();
+        m0.draw();
+        e0sh.draw();
+        e0.draw();
+        btn0 = buttons.length = 0;
+        btn0 = new Button(100, 285, "right", "setStage(story0)");
+        buttons.push(btn0);
+        sjsh = new Text(302, 374, 5, colors[10], "start journey");
+        sj = new Text(300, 372, 5, colors[8], "start journey");
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        sjsh.draw();
+        sj.draw();
+        btnin0.grid.draw();
+        btnin1.grid.draw();
+        btnin2.grid.draw();
+      }
+      var currentLevel = "";
+      var nextLevel = "level1";
+      function setLevel() {
+        currentLevel = nextLevel;
+        var str = nextLevel.replace("level", "");
+        var int = parseInt(str);
+        int += 1;
+        nextLevel = "level" + int;
+        initBg();
+        initBtnInMsg();
+      }
+      var str, int, inf, infsh, btn, btnTxt, btnTxtsh;
+      var btninmsg = new Inviter(125, 355, randomIC());
+      btninmsg.grid.create(randomIM());
+      function msg() {
+        clear();
+        background();
+        msgBg();
+        str = int = inf = infsh = btn = btnTxt = btnTxtsh = buttons.length = 0;
+        str = nextLevel.replace("level", "");
+        int = parseInt(str);
+        infsh = new Text(182, 102, 7, colors[10], "level " + int);
+        inf = new Text(180, 100, 7, colors[8], "level " + int);
+        btn = new Button(100, 285, "right", "setStage(eval(nextLevel))", true);
+        buttons.push(btn);
+        btnTxtsh = new Text(302, 374, 5, colors[10], "next");
+        btnTxt = new Text(300, 372, 5, colors[8], "next");
+        infsh.draw();
+        inf.draw();
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnTxtsh.draw();
+        btnTxt.draw();
+        btninmsg.grid.draw();
+      }
+      function initBtnInMsg() {
+        btninmsg = new Inviter(125, 355, randomIC());
+        btninmsg.grid.create(randomIM());
+      }
+      function randomIC() {
+        var r = (Math.random() * 16) ^ 0;
+        var ric = "";
+        switch (r) {
+          case 0:
+            ric = colors[0];
+            break;
+          case 1:
+            ric = colors[1];
+            break;
+          case 2:
+            ric = colors[2];
+            break;
+          case 3:
+            ric = colors[3];
+            break;
+          case 4:
+            ric = colors[4];
+            break;
+          case 5:
+            ric = colors[5];
+            break;
+          case 6:
+            ric = colors[6];
+            break;
+          case 7:
+            ric = colors[7];
+            break;
+          case 8:
+            ric = colors[8];
+            break;
+          case 9:
+            ric = colors[9];
+            break;
+          case 10:
+            ric = colors[10];
+            break;
+          case 11:
+            ric = colors[11];
+            break;
+          case 12:
+            ric = colors[12];
+            break;
+          case 13:
+            ric = colors[13];
+            break;
+          case 14:
+            ric = colors[14];
+            break;
+          case 15:
+            ric = colors[15];
+            break;
+          default:
+            ric = colors[0];
+        }
+        return ric;
+      }
+      function randomIM() {
+        var r = (Math.random() * 16) ^ 0;
+        var rim = {};
+        switch (r) {
+          case 0:
+            rim = maps[0];
+            break;
+          case 1:
+            rim = maps[1];
+            break;
+          case 2:
+            rim = maps[2];
+            break;
+          case 3:
+            rim = maps[3];
+            break;
+          case 4:
+            rim = maps[5];
+            break;
+          case 5:
+            rim = maps[5];
+            break;
+          case 6:
+            rim = maps[6];
+            break;
+          case 7:
+            rim = maps[8];
+            break;
+          case 8:
+            rim = maps[8];
+            break;
+          case 9:
+            rim = maps[9];
+            break;
+          case 10:
+            rim = maps[10];
+            break;
+          case 11:
+            rim = maps[11];
+            break;
+          case 12:
+            rim = maps[12];
+            break;
+          case 13:
+            rim = maps[13];
+            break;
+          case 14:
+            rim = maps[14];
+            break;
+          case 15:
+            rim = maps[15];
+            break;
+          default:
+            rim = maps[0];
+        }
+        return rim;
+      }
+      function displayLevel() {
+        var str = currentLevel.replace("level", "");
+        var int = parseInt(str);
+        var lvlsh = new Text(12, 12, 3, colors[10], "level " + int);
+        var lvl = new Text(10, 10, 3, colors[8], "level " + int);
+        lvlsh.draw();
+        lvl.draw();
+      }
+      function displayScore() {
+        var scrsh = new Text(12, 37, 3, colors[10], "score " + score);
+        var scr = new Text(10, 35, 3, colors[8], "score " + score);
+        scrsh.draw();
+        scr.draw();
+      }
+      function displayLives() {
+        var lvssh = new Text(12, 62, 3, colors[10], "lives " + lives);
+        var lvs = new Text(10, 60, 3, colors[8], "lives " + lives);
+        lvssh.draw();
+        lvs.draw();
+      }
+      function gameStuff() {
+        var borderRight = false;
+        var borderLeft = false;
+        for (qu = 0; qu < inviters.length; qu += 1) {
+          for (q = 0; q < inviters[qu].length; q += 1) {
+            inviters[qu][q].grid.draw();
+            inviters[qu][q].move();
+          }
+        }
+        for (qu = 0; qu < inviters.length; qu += 1) {
+          for (q = 0; q < inviters[qu].length; q += 1) {
+            for (var node in inviters[qu][q].grid.nodes) {
+              if (inviters[qu][q].grid.nodes[node].x < 0) {
+                borderLeft = true;
+              }
+            }
+            if (borderLeft) {
+              inviters[qu][q].stepCloser();
+            }
+          }
+        }
+        for (qu = inviters.length - 1; qu >= 0; qu -= 1) {
+          for (q = inviters[qu].length - 1; q >= 0; q -= 1) {
+            for (var node in inviters[qu][q].grid.nodes) {
+              if (inviters[qu][q].grid.nodes[node].x > width) {
+                borderRight = true;
+              }
+            }
+            if (borderRight) {
+              inviters[qu][q].stepCloser();
+            }
+          }
+        }
+        if (isFire) {
+          var randomQ = (Math.random() * inviters.length) ^ 0;
+          var randomQu = (Math.random() * inviters[randomQ].length) ^ 0;
+          var chanceToFire = Math.random();
+          if (chanceToFire > 0.955) {
+            if (inviters[randomQ][randomQu]) {
+              mines.push(
+                new Mine(
+                  inviters[randomQ][randomQu].grid.nodes[
+                    (inviters[randomQ][randomQu].grid.nodes.length / 2) ^ 0
+                  ].x,
+                  inviters[randomQ][randomQu].grid.nodes[
+                    (inviters[randomQ][randomQu].grid.nodes.length / 2) ^ 0
+                  ].y
+                )
+              );
+            }
+          }
+        }
+        for (Q = 0; Q < rockets.length; Q += 1) {
+          rockets[Q].draw();
+          rockets[Q].move();
+          for (qu = 0; qu < inviters.length; qu += 1) {
+            for (q = 0; q < inviters[qu].length; q += 1) {
+              if (rockets[Q].impact(inviters, qu, q)) {
+                var ix =
+                  inviters[qu][q].grid.nodes[
+                    (inviters[qu][q].grid.nodes.length / 2) ^ 0
+                  ].x;
+                var iy =
+                  inviters[qu][q].grid.nodes[
+                    (inviters[qu][q].grid.nodes.length / 2) ^ 0
+                  ].y;
+                if (boom) {
+                  boom.play();
+                }
+                inviters[qu].splice(q, 1);
+                rockets[Q].demolish();
+                score += 10;
+                explosions.push(new Explosion(ix, iy));
+                flashes.push(new Flash(ix, iy));
+              }
+            }
+          }
+          if (rockets[Q].y < 0) {
+            rockets[Q].demolish();
+          }
+        }
+        for (q = inviters.length - 1; q >= 0; q -= 1) {
+          if (inviters[q].length == 0) {
+            inviters.splice(q, 1);
+          }
+        }
+        for (q = rockets.length - 1; q >= 0; q -= 1) {
+          if (rockets[q].destroy) {
+            rockets.splice(q, 1);
+          }
+        }
+        for (Q = 0; Q < mines.length; Q += 1) {
+          mines[Q].draw();
+          mines[Q].move();
+          if (mines[Q].impact(ship)) {
+            if (boom) {
+              boom.play();
+            }
+            lives -= 1;
+            mines[Q].demolish();
+            explosions.push(
+              new Explosion(ship.grid.nodes[0].x, height - w * 3)
+            );
+            flashes.push(new Flash(ship.grid.nodes[0].x, height - w * 3));
+          }
+          if (mines[Q].y > height) {
+            mines[Q].demolish();
+          }
+        }
+        for (q = mines.length - 1; q >= 0; q -= 1) {
+          if (mines[q].destroy) {
+            mines.splice(q, 1);
+          }
+        }
+        ship.grid.draw();
+        ship.move();
+        for (var q in ship.grid.nodes) {
+          if (ship.grid.nodes[q].x > width) {
+            ship.setDir(-1);
+          }
+          if (ship.grid.nodes[q].x < 0) {
+            ship.setDir(1);
+          }
+        }
+        if (explosions.length != 0) {
+          for (q = explosions.length - 1; q >= 0; q -= 1) {
+            if (explosions[q].fade) {
+              explosions.splice(q, 1);
+            }
+          }
+          for (q = 0; q < explosions.length; q += 1) {
+            explosions[q].draw();
+          }
+        }
+        while (flashes.length != 0) {
+          for (q = flashes.length - 1; q >= 0; q -= 1) {
+            if (flashes[q].fade) {
+              flashes.splice(q, 1);
+            }
+          }
+          for (q = 0; q < flashes.length; q += 1) {
+            flashes[q].draw();
+          }
+        }
+      }
+      function anotherGameStuff() {
+        if (lives <= 0) {
+          eetsh3 = new Text(
+            62,
+            412,
+            4,
+            colors[10],
+            "your score is " + score + "."
+          );
+          eet3 = new Text(
+            60,
+            410,
+            4,
+            colors[8],
+            "your score is " + score + "."
+          );
+          setStage(endEnding);
+        }
+        for (q = inviters.length - 1; q >= 0; q -= 1) {
+          for (qu = inviters[q].length - 1; qu >= 0; qu -= 1) {
+            for (Q = inviters[q][qu].grid.nodes.length - 1; Q >= 0; Q -= 1) {
+              if (inviters[q][qu].grid.nodes[Q].y > height - w * 4) {
+                eetsh3 = new Text(
+                  62,
+                  412,
+                  4,
+                  colors[10],
+                  "your score is " + score + "."
+                );
+                eet3 = new Text(
+                  60,
+                  410,
+                  4,
+                  colors[8],
+                  "your score is " + score + "."
+                );
+                setStage(endEnding);
+              }
+            }
+          }
+        }
+        displayLevel();
+        displayScore();
+        displayLives();
+      }
+      function level1() {
+        clear();
+        background();
+        var borderRight = false;
+        var borderLeft = false;
+        for (qu = 0; qu < inviters.length; qu += 1) {
+          for (q = 0; q < inviters[qu].length; q += 1) {
+            inviters[qu][q].grid.draw();
+            inviters[qu][q].move();
+          }
+        }
+        for (qu = 0; qu < inviters.length; qu += 1) {
+          for (q = 0; q < inviters[qu].length; q += 1) {
+            for (var node in inviters[qu][q].grid.nodes) {
+              if (inviters[qu][q].grid.nodes[node].x < 0) {
+                borderLeft = true;
+              }
+            }
+            if (borderLeft) {
+              inviters[qu][q].stepCloser();
+            }
+          }
+        }
+        for (qu = inviters.length - 1; qu >= 0; qu -= 1) {
+          for (q = inviters[qu].length - 1; q >= 0; q -= 1) {
+            for (var node in inviters[qu][q].grid.nodes) {
+              if (inviters[qu][q].grid.nodes[node].x > width) {
+                borderRight = true;
+              }
+            }
+            if (borderRight) {
+              inviters[qu][q].stepCloser();
+            }
+          }
+        }
+        if (isFire) {
+          var randomQ = (Math.random() * inviters.length) ^ 0;
+          var randomQu = (Math.random() * inviters[randomQ].length) ^ 0;
+          var chanceToFire = Math.random();
+          if (chanceToFire > 0.955) {
+            if (inviters[randomQ][randomQu]) {
+              mines.push(
+                new Mine(
+                  inviters[randomQ][randomQu].grid.nodes[
+                    (inviters[randomQ][randomQu].grid.nodes.length / 2) ^ 0
+                  ].x,
+                  inviters[randomQ][randomQu].grid.nodes[
+                    (inviters[randomQ][randomQu].grid.nodes.length / 2) ^ 0
+                  ].y
+                )
+              );
+            }
+          }
+          for (q = inviters.length - 1; q >= 0; q -= 1) {
+            for (qu = inviters[q].length - 1; qu >= 0; qu -= 1) {
+              for (Q = inviters[q][qu].grid.nodes.length - 1; Q >= 0; Q -= 1) {
+                if (inviters[q][qu].grid.nodes[Q].y > height - w * 4) {
+                  eetsh3 = new Text(
+                    62,
+                    412,
+                    4,
+                    colors[10],
+                    "your score is " + score + "."
+                  );
+                  eet3 = new Text(
+                    60,
+                    410,
+                    4,
+                    colors[8],
+                    "your score is " + score + "."
+                  );
+                  setStage(endEnding);
+                }
+              }
+            }
+          }
+        }
+        for (Q = 0; Q < rockets.length; Q += 1) {
+          rockets[Q].draw();
+          rockets[Q].move();
+          for (qu = 0; qu < inviters.length; qu += 1) {
+            for (q = 0; q < inviters[qu].length; q += 1) {
+              if (rockets[Q].impact(inviters, qu, q)) {
+                var ix =
+                  inviters[qu][q].grid.nodes[
+                    (inviters[qu][q].grid.nodes.length / 2) ^ 0
+                  ].x;
+                var iy =
+                  inviters[qu][q].grid.nodes[
+                    (inviters[qu][q].grid.nodes.length / 2) ^ 0
+                  ].y;
+                if (boom) {
+                  boom.play();
+                }
+                inviters[qu].splice(q, 1);
+                rockets[Q].demolish();
+                score += 10;
+                explosions.push(new Explosion(ix, iy));
+                flashes.push(new Flash(ix, iy));
+              }
+            }
+          }
+          if (rockets[Q].y < 0) {
+            rockets[Q].demolish();
+          }
+        }
+        for (q = inviters.length - 1; q >= 0; q -= 1) {
+          if (inviters[q].length == 0) {
+            inviters.splice(q, 1);
+          }
+        }
+        for (q = rockets.length - 1; q >= 0; q -= 1) {
+          if (rockets[q].destroy) {
+            rockets.splice(q, 1);
+          }
+        }
+        for (Q = 0; Q < mines.length; Q += 1) {
+          mines[Q].draw();
+          mines[Q].move();
+          if (mines[Q].impact(ship)) {
+            if (boom) {
+              boom.play();
+            }
+            lives -= 1;
+            mines[Q].demolish();
+            explosions.push(
+              new Explosion(ship.grid.nodes[0].x, height - w * 3)
+            );
+            flashes.push(new Flash(ship.grid.nodes[0].x, height - w * 3));
+          }
+          if (mines[Q].y > height) {
+            mines[Q].demolish();
+          }
+        }
+        for (q = mines.length - 1; q >= 0; q -= 1) {
+          if (mines[q].destroy) {
+            mines.splice(q, 1);
+          }
+        }
+        ship.grid.draw();
+        ship.move();
+        for (var q in ship.grid.nodes) {
+          if (ship.grid.nodes[q].x > width) {
+            ship.setDir(-1);
+          }
+          if (ship.grid.nodes[q].x < 0) {
+            ship.setDir(1);
+          }
+        }
+        if (explosions.length != 0) {
+          for (q = explosions.length - 1; q >= 0; q -= 1) {
+            if (explosions[q].fade) {
+              explosions.splice(q, 1);
+            }
+          }
+          for (q = 0; q < explosions.length; q += 1) {
+            explosions[q].draw();
+          }
+        }
+        while (flashes.length != 0) {
+          for (q = flashes.length - 1; q >= 0; q -= 1) {
+            if (flashes[q].fade) {
+              flashes.splice(q, 1);
+            }
+          }
+          for (q = 0; q < flashes.length; q += 1) {
+            flashes[q].draw();
+          }
+        }
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              if (qu == 0) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[1]
+                );
+                inviters[q][qu].grid.create(maps[1]);
+              } else {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[2]
+                );
+                inviters[q][qu].grid.create(maps[2]);
+              }
+            }
+          }
+        }
+        if (lives <= 0) {
+          eetsh3 = new Text(
+            62,
+            412,
+            4,
+            colors[10],
+            "your score is " + score + "."
+          );
+          eet3 = new Text(
+            60,
+            410,
+            4,
+            colors[8],
+            "your score is " + score + "."
+          );
+          setStage(endEnding);
+        }
+        if (!isFire) {
+          for (q = inviters.length - 1; q >= 0; q -= 1) {
+            for (qu = inviters[q].length - 1; qu >= 0; qu -= 1) {
+              for (Q = inviters[q][qu].grid.nodes.length - 1; Q >= 0; Q -= 1) {
+                if (inviters[q][qu].grid.nodes[Q].y > height - w * 4) {
+                  setStage(goodEnding);
+                  explosions.length = 0;
+                  flashes.length = 0;
+                  rockets.length = 0;
+                  mines.length = 0;
+                  isFire = false;
+                }
+              }
+            }
+          }
+        }
+        displayLevel();
+        displayScore();
+        displayLives();
+      }
+      function level2() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              inviters[q][qu] = new Inviter(
+                offset * q + w * 9 * q,
+                offset * qu + w * 9 * qu,
+                colors[3]
+              );
+              inviters[q][qu].grid.create(maps[3]);
+            }
+          }
+        }
+        anotherGameStuff();
+      }
+      function level3() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              if (qu == 0) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[5]
+                );
+                inviters[q][qu].grid.create(maps[5]);
+              } else {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[6]
+                );
+                inviters[q][qu].grid.create(maps[6]);
+              }
+            }
+          }
+        }
+        anotherGameStuff();
+      }
+      function level4() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              inviters[q][qu] = new Inviter(
+                offset * q + w * 9 * q,
+                offset * qu + w * 9 * qu,
+                colors[9]
+              );
+              inviters[q][qu].grid.create(maps[9]);
+            }
+          }
+        }
+        anotherGameStuff();
+      }
+      function level5() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              if (qu == 0) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[8]
+                );
+                inviters[q][qu].grid.create(maps[8]);
+              } else {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[12]
+                );
+                inviters[q][qu].grid.create(maps[12]);
+              }
+            }
+          }
+        }
+        anotherGameStuff();
+      }
+      function level6() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              inviters[q][qu] = new Inviter(
+                offset * q + w * 9 * q,
+                offset * qu + w * 9 * qu,
+                colors[13]
+              );
+              inviters[q][qu].grid.create(maps[13]);
+            }
+          }
+        }
+        anotherGameStuff();
+      }
+      function level7() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              if (qu == 0) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[10]
+                );
+                inviters[q][qu].grid.create(maps[10]);
+              } else {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[11]
+                );
+                inviters[q][qu].grid.create(maps[11]);
+              }
+            }
+          }
+        }
+        anotherGameStuff();
+      }
+      function level8() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              inviters[q][qu] = new Inviter(
+                offset * q + w * 9 * q,
+                offset * qu + w * 9 * qu,
+                colors[15]
+              );
+              inviters[q][qu].grid.create(maps[15]);
+            }
+          }
+        }
+        anotherGameStuff();
+      }
+      function level9() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          rc = 3;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              if (qu == 0) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[0]
+                );
+                inviters[q][qu].grid.create(maps[0]);
+              } else if (qu == 1) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[1]
+                );
+                inviters[q][qu].grid.create(maps[1]);
+              } else {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[2]
+                );
+                inviters[q][qu].grid.create(maps[2]);
+              }
+            }
+          }
+        }
+        anotherGameStuff();
+      }
+      function level10() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              if (qu == 0) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[5]
+                );
+                inviters[q][qu].grid.create(maps[5]);
+              } else if (qu == 1) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[6]
+                );
+                inviters[q][qu].grid.create(maps[6]);
+              } else {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[8]
+                );
+                inviters[q][qu].grid.create(maps[8]);
+              }
+            }
+          }
+        }
+        anotherGameStuff();
+      }
+      function level11() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              if (qu == 0) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[10]
+                );
+                inviters[q][qu].grid.create(maps[10]);
+              } else if (qu == 1) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[11]
+                );
+                inviters[q][qu].grid.create(maps[11]);
+              } else {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[13]
+                );
+                inviters[q][qu].grid.create(maps[13]);
+              }
+            }
+          }
+        }
+        anotherGameStuff();
+      }
+      function level12() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          for (var q = 0; q < cc; q += 1) {
+            inviters[q] = [];
+            for (var qu = 0; qu < rc; qu += 1) {
+              if (qu == 0) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[9]
+                );
+                inviters[q][qu].grid.create(maps[9]);
+              } else if (qu == 1) {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[14]
+                );
+                inviters[q][qu].grid.create(maps[14]);
+              } else {
+                inviters[q][qu] = new Inviter(
+                  offset * q + w * 9 * q,
+                  offset * qu + w * 9 * qu,
+                  colors[15]
+                );
+                inviters[q][qu].grid.create(maps[15]);
+              }
+            }
+          }
+        }
+        anotherGameStuff();
+      }
+      function level13() {
+        clear();
+        background();
+        gameStuff();
+        if (inviters.length == 0) {
+          setStage(msg);
+          w = 5;
+          score += 100;
+          rockets.length = 0;
+          mines.length = 0;
+          isFire = false;
+          inviters[0] = [];
+          inviters[0][0] = new Inviter(
+            offset * q + w * 9 * q,
+            offset * qu + w * 9 * qu,
+            colors[7]
+          );
+          inviters[0][0].grid.create(maps[7]);
+        }
+        anotherGameStuff();
+      }
+      function level14() {
+        clear();
+        background();
+        var borderRight = false;
+        var borderLeft = false;
+        for (qu = 0; qu < inviters.length; qu += 1) {
+          for (q = 0; q < inviters[qu].length; q += 1) {
+            inviters[qu][q].grid.draw();
+            inviters[qu][q].move();
+          }
+        }
+        for (qu = 0; qu < inviters.length; qu += 1) {
+          for (q = 0; q < inviters[qu].length; q += 1) {
+            for (var node in inviters[qu][q].grid.nodes) {
+              if (inviters[qu][q].grid.nodes[node].x < 0) {
+                borderLeft = true;
+              }
+            }
+            if (borderLeft) {
+              inviters[qu][q].stepCloser();
+            }
+          }
+        }
+        for (qu = inviters.length - 1; qu >= 0; qu -= 1) {
+          for (q = inviters[qu].length - 1; q >= 0; q -= 1) {
+            for (var node in inviters[qu][q].grid.nodes) {
+              if (inviters[qu][q].grid.nodes[node].x > width) {
+                borderRight = true;
+              }
+            }
+            if (borderRight) {
+              inviters[qu][q].stepCloser();
+            }
+          }
+        }
+        if (isFire) {
+          var randomQ = (Math.random() * inviters.length) ^ 0;
+          var randomQu = (Math.random() * inviters[randomQ].length) ^ 0;
+          var chanceToFire = Math.random();
+          if (chanceToFire > 0.955) {
+            if (inviters[randomQ][randomQu]) {
+              mines.push(
+                new Mine(
+                  inviters[randomQ][randomQu].grid.nodes[
+                    (inviters[randomQ][randomQu].grid.nodes.length / 2) ^ 0
+                  ].x,
+                  inviters[randomQ][randomQu].grid.nodes[
+                    (inviters[randomQ][randomQu].grid.nodes.length / 2) ^ 0
+                  ].y
+                )
+              );
+            }
+          }
+          for (q = inviters.length - 1; q >= 0; q -= 1) {
+            for (qu = inviters[q].length - 1; qu >= 0; qu -= 1) {
+              for (Q = inviters[q][qu].grid.nodes.length - 1; Q >= 0; Q -= 1) {
+                if (inviters[q][qu].grid.nodes[Q].y > height - w * 4) {
+                  betsh18 = new Text(
+                    62,
+                    382,
+                    4,
+                    colors[10],
+                    "your score is " + score + "."
+                  );
+                  bet18 = new Text(
+                    60,
+                    380,
+                    4,
+                    colors[8],
+                    "your score is " + score + "."
+                  );
+                  setStage(badEnding);
+                }
+              }
+            }
+          }
+        }
+        for (Q = 0; Q < rockets.length; Q += 1) {
+          rockets[Q].draw();
+          rockets[Q].move();
+          for (qu = 0; qu < inviters.length; qu += 1) {
+            for (q = 0; q < inviters[qu].length; q += 1) {
+              if (rockets[Q].impact(inviters, qu, q)) {
+                var ix =
+                  inviters[qu][q].grid.nodes[
+                    (inviters[qu][q].grid.nodes.length / 2) ^ 0
+                  ].x;
+                var iy =
+                  inviters[qu][q].grid.nodes[
+                    (inviters[qu][q].grid.nodes.length / 2) ^ 0
+                  ].y;
+                if (boom) {
+                  boom.play();
+                }
+                rockets[Q].demolish();
+                score += 100;
+                explosions.push(new Explosion(ix, iy));
+                flashes.push(new Flash(ix, iy));
+              }
+            }
+          }
+          if (rockets[Q].y < 0) {
+            rockets[Q].demolish();
+          }
+        }
+        for (q = rockets.length - 1; q >= 0; q -= 1) {
+          if (rockets[q].destroy) {
+            rockets.splice(q, 1);
+          }
+        }
+        for (Q = 0; Q < mines.length; Q += 1) {
+          mines[Q].draw();
+          mines[Q].move();
+          if (mines[Q].impact(ship)) {
+            if (boom) {
+              boom.play();
+            }
+            lives -= 1;
+            mines[Q].demolish();
+            explosions.push(
+              new Explosion(ship.grid.nodes[0].x, height - w * 3)
+            );
+            flashes.push(new Flash(ship.grid.nodes[0].x, height - w * 3));
+          }
+          if (mines[Q].y > height) {
+            mines[Q].demolish();
+          }
+        }
+        for (q = mines.length - 1; q >= 0; q -= 1) {
+          if (mines[q].destroy) {
+            mines.splice(q, 1);
+          }
+        }
+        ship.grid.draw();
+        ship.move();
+        for (var q in ship.grid.nodes) {
+          if (ship.grid.nodes[q].x > width) {
+            ship.setDir(-1);
+          }
+          if (ship.grid.nodes[q].x < 0) {
+            ship.setDir(1);
+          }
+        }
+        if (explosions.length != 0) {
+          for (q = explosions.length - 1; q >= 0; q -= 1) {
+            if (explosions[q].fade) {
+              explosions.splice(q, 1);
+            }
+          }
+          for (q = 0; q < explosions.length; q += 1) {
+            explosions[q].draw();
+          }
+        }
+        while (flashes.length != 0) {
+          for (q = flashes.length - 1; q >= 0; q -= 1) {
+            if (flashes[q].fade) {
+              flashes.splice(q, 1);
+            }
+          }
+          for (q = 0; q < flashes.length; q += 1) {
+            flashes[q].draw();
+          }
+        }
+        if (lives <= 0) {
+          betsh18 = new Text(
+            62,
+            382,
+            4,
+            colors[10],
+            "your score is " + score + "."
+          );
+          bet18 = new Text(
+            60,
+            380,
+            4,
+            colors[8],
+            "your score is " + score + "."
+          );
+          setStage(badEnding);
+        }
+        for (q = inviters.length - 1; q >= 0; q -= 1) {
+          for (qu = inviters[q].length - 1; qu >= 0; qu -= 1) {
+            for (Q = inviters[q][qu].grid.nodes.length - 1; Q >= 0; Q -= 1) {
+              if (inviters[q][qu].grid.nodes[Q].y > height - w * 4) {
+                betsh18 = new Text(
+                  62,
+                  382,
+                  4,
+                  colors[10],
+                  "your score is " + score + "."
+                );
+                bet18 = new Text(
+                  60,
+                  380,
+                  4,
+                  colors[8],
+                  "your score is " + score + "."
+                );
+                setStage(badEnding);
+              }
+            }
+          }
+        }
+        displayLevel();
+        displayScore();
+        displayLives();
+      }
+      var eetsh0 = new Text(62, 322, 4, colors[10], "unfortunately your ship");
+      var eetsh1 = new Text(62, 352, 4, colors[10], "is destroyed.");
+      var eetsh2 = new Text(62, 382, 4, colors[10], "try again.");
+      var eet0 = new Text(60, 320, 4, colors[8], "unfortunately your ship");
+      var eet1 = new Text(60, 350, 4, colors[8], "is destroyed.");
+      var eet2 = new Text(60, 380, 4, colors[8], "try again.");
+      var eetsh3, eet3;
+      var btnEE, btnEETxt, btnEETxtsh;
+      var btninend0 = new Inviter(105, 145, randomIC());
+      btninend0.grid.create(randomIM());
+      var btninend1 = new Inviter(185, 175, randomIC());
+      btninend1.grid.create(randomIM());
+      var btninend2 = new Inviter(125, 225, randomIC());
+      btninend2.grid.create(randomIM());
+      function endEnding() {
+        clear();
+        background();
+        msgBg();
+        btnEE = buttons.length = inviters.length = 0;
+        btnEE = new Button(100, 100, "right", "setStage(menu)");
+        btnEETxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnEETxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnEE);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnEETxtsh.draw();
+        btnEETxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        eetsh0.draw();
+        eetsh1.draw();
+        eetsh2.draw();
+        eetsh3.draw();
+        eet0.draw();
+        eet1.draw();
+        eet2.draw();
+        eet3.draw();
+        currentLevel = "";
+        nextLevel = "level1";
+        rc = 2;
+        w = 5;
+        score = 0;
+        lives = 10;
+        isFire = false;
+        rockets.length = mines.length = explosions.length = flashes.length = 0;
+        for (var q = 0; q < cc; q += 1) {
+          inviters[q] = [];
+          for (var qu = 0; qu < rc; qu += 1) {
+            inviters[q][qu] = new Inviter(
+              offset * q + w * 9 * q,
+              offset * qu + w * 9 * qu,
+              colors[0]
+            );
+            inviters[q][qu].grid.create(maps[0]);
+          }
+        }
+      }
+      var betsh0 = new Text(62, 322, 4, colors[10], "the aliens said to the");
+      var betsh1 = new Text(62, 352, 4, colors[10], "earthlings. we are");
+      var betsh2 = new Text(62, 382, 4, colors[10], "representatives of");
+      var betsh3 = new Text(62, 412, 4, colors[10], "space invaiters.");
+      var betsh4 = new Text(
+        62,
+        442,
+        4,
+        colors[10],
+        "from the intergalactic alliance."
+      );
+      var betsh5 = new Text(62, 472, 4, colors[10], "we explore the cosmos in");
+      var betsh6 = new Text(
+        62,
+        502,
+        4,
+        colors[10],
+        "search of intelligent beings. in"
+      );
+      var betsh7 = new Text(
+        62,
+        532,
+        4,
+        colors[10],
+        "order to help them in evolution."
+      );
+      var bet0 = new Text(60, 320, 4, colors[8], "the aliens said to the");
+      var bet1 = new Text(60, 350, 4, colors[8], "earthlings. we are");
+      var bet2 = new Text(60, 380, 4, colors[8], "representatives of");
+      var bet3 = new Text(60, 410, 4, colors[8], "space invaiters.");
+      var bet4 = new Text(
+        60,
+        440,
+        4,
+        colors[8],
+        "from the intergalactic alliance."
+      );
+      var bet5 = new Text(60, 470, 4, colors[8], "we explore the cosmos in");
+      var bet6 = new Text(
+        60,
+        500,
+        4,
+        colors[8],
+        "search of intelligent beings. in"
+      );
+      var bet7 = new Text(
+        60,
+        530,
+        4,
+        colors[8],
+        "order to help them in evolution."
+      );
+      var btnBE, btnBETxt, btnBETxtsh;
+      function badEnding() {
+        clear();
+        background();
+        msgBg();
+        btnBE = buttons.length = inviters.length = 0;
+        btnBE = new Button(100, 100, "right", "setStage(badEnding1)");
+        btnBETxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnBETxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnBE);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnBETxtsh.draw();
+        btnBETxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        betsh0.draw();
+        betsh1.draw();
+        betsh2.draw();
+        betsh3.draw();
+        betsh4.draw();
+        betsh5.draw();
+        betsh6.draw();
+        betsh7.draw();
+        bet0.draw();
+        bet1.draw();
+        bet2.draw();
+        bet3.draw();
+        bet4.draw();
+        bet5.draw();
+        bet6.draw();
+        bet7.draw();
+        currentLevel = "";
+        nextLevel = "level1";
+        rc = 2;
+        w = 5;
+        score = 0;
+        lives = 10;
+        isFire = false;
+        rockets.length = mines.length = explosions.length = flashes.length = 0;
+        for (var q = 0; q < cc; q += 1) {
+          inviters[q] = [];
+          for (var qu = 0; qu < rc; qu += 1) {
+            inviters[q][qu] = new Inviter(
+              offset * q + w * 9 * q,
+              offset * qu + w * 9 * qu,
+              colors[0]
+            );
+            inviters[q][qu].grid.create(maps[0]);
+          }
+        }
+      }
+      var betsh8 = new Text(
+        62,
+        322,
+        4,
+        colors[10],
+        "share with them technology and"
+      );
+      var betsh9 = new Text(
+        62,
+        352,
+        4,
+        colors[10],
+        "resources. we could invite you"
+      );
+      var betsh10 = new Text(
+        62,
+        382,
+        4,
+        colors[10],
+        "to our organization. but you"
+      );
+      var betsh11 = new Text(
+        62,
+        412,
+        4,
+        colors[10],
+        "attacked us. you are too"
+      );
+      var betsh12 = new Text(
+        62,
+        442,
+        4,
+        colors[10],
+        "aggressive. your sector is now"
+      );
+      var betsh13 = new Text(62, 472, 4, colors[10], "banned. you are given a");
+      var betsh14 = new Text(
+        62,
+        502,
+        4,
+        colors[10],
+        "thousand years to development."
+      );
+      var betsh15 = new Text(
+        62,
+        532,
+        4,
+        colors[10],
+        "if you do not destroy each other"
+      );
+      var bet8 = new Text(
+        60,
+        320,
+        4,
+        colors[8],
+        "share with them technology and"
+      );
+      var bet9 = new Text(
+        60,
+        350,
+        4,
+        colors[8],
+        "resources. we could invite you"
+      );
+      var bet10 = new Text(
+        60,
+        380,
+        4,
+        colors[8],
+        "to our organization. but you"
+      );
+      var bet11 = new Text(60, 410, 4, colors[8], "attacked us. you are too");
+      var bet12 = new Text(
+        60,
+        440,
+        4,
+        colors[8],
+        "aggressive. your sector is now"
+      );
+      var bet13 = new Text(60, 470, 4, colors[8], "banned. you are given a");
+      var bet14 = new Text(
+        60,
+        500,
+        4,
+        colors[8],
+        "thousand years to development."
+      );
+      var bet15 = new Text(
+        60,
+        530,
+        4,
+        colors[8],
+        "if you do not destroy each other"
+      );
+      function badEnding1() {
+        clear();
+        background();
+        msgBg();
+        btnBE = buttons.length = 0;
+        btnBE = new Button(100, 100, "right", "setStage(badEnding2)");
+        btnBETxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnBETxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnBE);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnBETxtsh.draw();
+        btnBETxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        betsh8.draw();
+        betsh9.draw();
+        betsh10.draw();
+        betsh11.draw();
+        betsh12.draw();
+        betsh13.draw();
+        betsh14.draw();
+        betsh15.draw();
+        bet8.draw();
+        bet9.draw();
+        bet10.draw();
+        bet11.draw();
+        bet12.draw();
+        bet13.draw();
+        bet14.draw();
+        bet15.draw();
+      }
+      var betsh16 = new Text(62, 322, 4, colors[10], "by that time.");
+      var betsh17 = new Text(
+        62,
+        352,
+        4,
+        colors[10],
+        "maybe you're lucky next time."
+      );
+      var bet16 = new Text(60, 320, 4, colors[8], "by that time.");
+      var bet17 = new Text(
+        60,
+        350,
+        4,
+        colors[8],
+        "maybe you're lucky next time."
+      );
+      var betsh18, bet18;
+      function badEnding2() {
+        clear();
+        background();
+        msgBg();
+        btnBE = buttons.length = 0;
+        btnBE = new Button(100, 100, "right", "setStage(menu)");
+        btnBETxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnBETxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnBE);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnBETxtsh.draw();
+        btnBETxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        betsh16.draw();
+        betsh17.draw();
+        betsh18.draw();
+        bet16.draw();
+        bet17.draw();
+        bet18.draw();
+      }
+      var getsh0 = betsh0;
+      var getsh1 = betsh1;
+      var getsh2 = betsh2;
+      var getsh3 = betsh3;
+      var getsh4 = betsh4;
+      var getsh5 = betsh5;
+      var getsh6 = betsh6;
+      var getsh7 = betsh7;
+      var get0 = bet0;
+      var get1 = bet1;
+      var get2 = bet2;
+      var get3 = bet3;
+      var get4 = bet4;
+      var get5 = bet5;
+      var get6 = bet6;
+      var get7 = bet7;
+      var btnGE, btnGETxt, btnGETxtsh;
+      function goodEnding() {
+        clear();
+        background();
+        msgBg();
+        btnGE = buttons.length = inviters.length = 0;
+        btnGE = new Button(100, 100, "right", "setStage(goodEnding1)");
+        btnGETxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnGETxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnGE);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnGETxtsh.draw();
+        btnGETxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        getsh0.draw();
+        getsh1.draw();
+        getsh2.draw();
+        getsh3.draw();
+        getsh4.draw();
+        getsh5.draw();
+        getsh6.draw();
+        getsh7.draw();
+        get0.draw();
+        get1.draw();
+        get2.draw();
+        get3.draw();
+        get4.draw();
+        get5.draw();
+        get6.draw();
+        get7.draw();
+        currentLevel = "";
+        nextLevel = "level1";
+        rc = 2;
+        w = 5;
+        score = 0;
+        lives = 10;
+        isFire = false;
+        rockets.length = mines.length = explosions.length = flashes.length = 0;
+        for (var q = 0; q < cc; q += 1) {
+          inviters[q] = [];
+          for (var qu = 0; qu < rc; qu += 1) {
+            inviters[q][qu] = new Inviter(
+              offset * q + w * 9 * q,
+              offset * qu + w * 9 * qu,
+              colors[0]
+            );
+            inviters[q][qu].grid.create(maps[0]);
+          }
+        }
+      }
+      var getsh8 = betsh8;
+      var getsh9 = betsh9;
+      var getsh10 = new Text(
+        62,
+        382,
+        4,
+        colors[10],
+        "to our organization. you are"
+      );
+      var getsh11 = new Text(
+        62,
+        412,
+        4,
+        colors[10],
+        "at war with each other. but"
+      );
+      var getsh12 = new Text(
+        62,
+        442,
+        4,
+        colors[10],
+        "having entered into negotiations"
+      );
+      var getsh13 = new Text(
+        62,
+        472,
+        4,
+        colors[10],
+        "with us you have proved that"
+      );
+      var getsh14 = new Text(
+        62,
+        502,
+        4,
+        colors[10],
+        "everything is not lost for you."
+      );
+      var getsh15 = new Text(
+        62,
+        532,
+        4,
+        colors[10],
+        "if you are ready to give up wars"
+      );
+      var get8 = bet8;
+      var get9 = bet9;
+      var get10 = new Text(
+        60,
+        380,
+        4,
+        colors[8],
+        "to our organization. you are"
+      );
+      var get11 = new Text(
+        60,
+        410,
+        4,
+        colors[8],
+        "at war with each other. but"
+      );
+      var get12 = new Text(
+        60,
+        440,
+        4,
+        colors[8],
+        "having entered into negotiations"
+      );
+      var get13 = new Text(
+        60,
+        470,
+        4,
+        colors[8],
+        "with us you have proved that"
+      );
+      var get14 = new Text(
+        60,
+        500,
+        4,
+        colors[8],
+        "everything is not lost for you."
+      );
+      var get15 = new Text(
+        60,
+        530,
+        4,
+        colors[8],
+        "if you are ready to give up wars"
+      );
+      function goodEnding1() {
+        clear();
+        background();
+        msgBg();
+        btnGE = buttons.length = 0;
+        btnGE = new Button(100, 100, "right", "setStage(goodEnding2)");
+        btnGETxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnGETxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnGE);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnGETxtsh.draw();
+        btnGETxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        getsh8.draw();
+        getsh9.draw();
+        getsh10.draw();
+        getsh11.draw();
+        getsh12.draw();
+        getsh13.draw();
+        getsh14.draw();
+        getsh15.draw();
+        get8.draw();
+        get9.draw();
+        get10.draw();
+        get11.draw();
+        get12.draw();
+        get13.draw();
+        get14.draw();
+        get15.draw();
+      }
+      var getsh16 = new Text(
+        62,
+        322,
+        4,
+        colors[10],
+        "and enmity, we are ready to"
+      );
+      var getsh17 = new Text(62, 352, 4, colors[10], "cooperate with you.");
+      var getsh18 = new Text(
+        62,
+        382,
+        4,
+        colors[10],
+        "your score is over 999999999."
+      );
+      var get16 = new Text(
+        60,
+        320,
+        4,
+        colors[8],
+        "and enmity, we are ready to"
+      );
+      var get17 = new Text(60, 350, 4, colors[8], "cooperate with you.");
+      var get18 = new Text(
+        60,
+        380,
+        4,
+        colors[8],
+        "your score is over 999999999."
+      );
+      function goodEnding2() {
+        clear();
+        background();
+        msgBg();
+        btnGE = buttons.length = 0;
+        btnGE = new Button(100, 100, "right", "setStage(menu)");
+        btnGETxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnGETxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnGE);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnGETxtsh.draw();
+        btnGETxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        getsh16.draw();
+        getsh17.draw();
+        getsh18.draw();
+        get16.draw();
+        get17.draw();
+        get18.draw();
+      }
+      function level(name) {
+        //
+      }
+      var stsh0 = new Text(
+        62,
+        322,
+        4,
+        colors[10],
+        "mankind has long and deeply"
+      );
+      var stsh1 = new Text(62, 352, 4, colors[10], "mired in endless military");
+      var stsh2 = new Text(
+        62,
+        382,
+        4,
+        colors[10],
+        "conflicts, that no one already"
+      );
+      var stsh3 = new Text(
+        62,
+        412,
+        4,
+        colors[10],
+        "understands whom to fight, who"
+      );
+      var stsh4 = new Text(
+        62,
+        442,
+        4,
+        colors[10],
+        "can be seen among allies and"
+      );
+      var stsh5 = new Text(
+        62,
+        472,
+        4,
+        colors[10],
+        "for what it's all need. nuclear"
+      );
+      var stsh6 = new Text(
+        62,
+        502,
+        4,
+        colors[10],
+        "weapons do not scare anyone,"
+      );
+      var stsh7 = new Text(
+        62,
+        532,
+        4,
+        colors[10],
+        "but all are afraid of the new"
+      );
+      var st0 = new Text(60, 320, 4, colors[8], "mankind has long and deeply");
+      var st1 = new Text(60, 350, 4, colors[8], "mired in endless military");
+      var st2 = new Text(
+        60,
+        380,
+        4,
+        colors[8],
+        "conflicts, that no one already"
+      );
+      var st3 = new Text(
+        60,
+        410,
+        4,
+        colors[8],
+        "understands whom to fight, who"
+      );
+      var st4 = new Text(60, 440, 4, colors[8], "can be seen among allies and");
+      var st5 = new Text(
+        60,
+        470,
+        4,
+        colors[8],
+        "for what it's all need. nuclear"
+      );
+      var st6 = new Text(60, 500, 4, colors[8], "weapons do not scare anyone,");
+      var st7 = new Text(
+        60,
+        530,
+        4,
+        colors[8],
+        "but all are afraid of the new"
+      );
+      var btnS, btnSTxt, btnSTxtsh;
+      function story0() {
+        clear();
+        background();
+        msgBg();
+        btnS = buttons.length = 0;
+        btnS = new Button(100, 100, "right", "setStage(story1)");
+        btnSTxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnSTxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnS);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnSTxtsh.draw();
+        btnSTxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        stsh0.draw();
+        stsh1.draw();
+        stsh2.draw();
+        stsh3.draw();
+        stsh4.draw();
+        stsh5.draw();
+        stsh6.draw();
+        stsh7.draw();
+        st0.draw();
+        st1.draw();
+        st2.draw();
+        st3.draw();
+        st4.draw();
+        st5.draw();
+        st6.draw();
+        st7.draw();
+      }
+      var stsh8 = new Text(62, 322, 4, colors[10], "military development of");
+      var stsh9 = new Text(
+        62,
+        352,
+        4,
+        colors[10],
+        "superpowers and yet the close"
+      );
+      var stsh10 = new Text(
+        62,
+        382,
+        4,
+        colors[10],
+        "end existence of the living on"
+      );
+      var stsh11 = new Text(
+        62,
+        412,
+        4,
+        colors[10],
+        "the planet. since all the"
+      );
+      var stsh12 = new Text(
+        62,
+        442,
+        4,
+        colors[10],
+        "attention of the greatest minds"
+      );
+      var stsh13 = new Text(
+        62,
+        472,
+        4,
+        colors[10],
+        "of mankind for years has been"
+      );
+      var stsh14 = new Text(
+        62,
+        502,
+        4,
+        colors[10],
+        "fixed in the war, no one was"
+      );
+      var stsh15 = new Text(62, 532, 4, colors[10], "able to find ships of");
+      var st8 = new Text(60, 320, 4, colors[8], "military development of");
+      var st9 = new Text(
+        60,
+        350,
+        4,
+        colors[8],
+        "superpowers and yet the close"
+      );
+      var st10 = new Text(
+        60,
+        380,
+        4,
+        colors[8],
+        "end existence of the living on"
+      );
+      var st11 = new Text(60, 410, 4, colors[8], "the planet. since all the");
+      var st12 = new Text(
+        60,
+        440,
+        4,
+        colors[8],
+        "attention of the greatest minds"
+      );
+      var st13 = new Text(
+        60,
+        470,
+        4,
+        colors[8],
+        "of mankind for years has been"
+      );
+      var st14 = new Text(
+        60,
+        500,
+        4,
+        colors[8],
+        "fixed in the war, no one was"
+      );
+      var st15 = new Text(60, 530, 4, colors[8], "able to find ships of");
+      function story1() {
+        clear();
+        background();
+        msgBg();
+        btnS = buttons.length = 0;
+        btnS = new Button(100, 100, "right", "setStage(story2)");
+        btnSTxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnSTxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnS);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnSTxtsh.draw();
+        btnSTxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        stsh8.draw();
+        stsh9.draw();
+        stsh10.draw();
+        stsh11.draw();
+        stsh12.draw();
+        stsh13.draw();
+        stsh14.draw();
+        stsh15.draw();
+        st8.draw();
+        st9.draw();
+        st10.draw();
+        st11.draw();
+        st12.draw();
+        st13.draw();
+        st14.draw();
+        st15.draw();
+      }
+      var stsh16 = new Text(
+        62,
+        322,
+        4,
+        colors[10],
+        "alien beings in time who are"
+      );
+      var stsh17 = new Text(
+        62,
+        352,
+        4,
+        colors[10],
+        "all approaching the earth. now"
+      );
+      var stsh18 = new Text(
+        62,
+        382,
+        4,
+        colors[10],
+        "there is not enough time for"
+      );
+      var stsh19 = new Text(
+        62,
+        412,
+        4,
+        colors[10],
+        "reflection and decision making"
+      );
+      var stsh20 = new Text(
+        62,
+        442,
+        4,
+        colors[10],
+        "what to do with the general"
+      );
+      var stsh21 = new Text(62, 472, 4, colors[10], "problem. and already the");
+      var stsh22 = new Text(
+        62,
+        502,
+        4,
+        colors[10],
+        "disunited humanity is now"
+      );
+      var stsh23 = new Text(
+        62,
+        532,
+        4,
+        colors[10],
+        "terrified and unable to even to"
+      );
+      var st16 = new Text(
+        60,
+        320,
+        4,
+        colors[8],
+        "alien beings in time who are"
+      );
+      var st17 = new Text(
+        60,
+        350,
+        4,
+        colors[8],
+        "all approaching the earth. now"
+      );
+      var st18 = new Text(
+        60,
+        380,
+        4,
+        colors[8],
+        "there is not enough time for"
+      );
+      var st19 = new Text(
+        60,
+        410,
+        4,
+        colors[8],
+        "reflection and decision making"
+      );
+      var st20 = new Text(60, 440, 4, colors[8], "what to do with the general");
+      var st21 = new Text(60, 470, 4, colors[8], "problem. and already the");
+      var st22 = new Text(60, 500, 4, colors[8], "disunited humanity is now");
+      var st23 = new Text(
+        60,
+        530,
+        4,
+        colors[8],
+        "terrified and unable to even to"
+      );
+      function story2() {
+        clear();
+        background();
+        msgBg();
+        btnS = buttons.length = 0;
+        btnS = new Button(100, 100, "right", "setStage(story3)");
+        btnSTxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnSTxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnS);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnSTxtsh.draw();
+        btnSTxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        stsh16.draw();
+        stsh17.draw();
+        stsh18.draw();
+        stsh19.draw();
+        stsh20.draw();
+        stsh21.draw();
+        stsh22.draw();
+        stsh23.draw();
+        st16.draw();
+        st17.draw();
+        st18.draw();
+        st19.draw();
+        st20.draw();
+        st21.draw();
+        st22.draw();
+        st23.draw();
+      }
+      var stsh24 = new Text(
+        62,
+        322,
+        4,
+        colors[10],
+        "solve an important issue for"
+      );
+      var stsh25 = new Text(
+        62,
+        352,
+        4,
+        colors[10],
+        "everyone. in this endless"
+      );
+      var stsh26 = new Text(
+        62,
+        382,
+        4,
+        colors[10],
+        "chaos, you are the captain of a"
+      );
+      var stsh27 = new Text(
+        62,
+        412,
+        4,
+        colors[10],
+        "spaceship. your main task was"
+      );
+      var stsh28 = new Text(
+        62,
+        442,
+        4,
+        colors[10],
+        "to monitor the state of general"
+      );
+      var stsh29 = new Text(
+        62,
+        472,
+        4,
+        colors[10],
+        "military conflict, detection of"
+      );
+      var stsh30 = new Text(
+        62,
+        502,
+        4,
+        colors[10],
+        "new hotbeds of active action"
+      );
+      var stsh31 = new Text(
+        62,
+        532,
+        4,
+        colors[10],
+        "and transfer information to"
+      );
+      var st24 = new Text(
+        60,
+        320,
+        4,
+        colors[8],
+        "solve an important issue for"
+      );
+      var st25 = new Text(60, 350, 4, colors[8], "everyone. in this endless");
+      var st26 = new Text(
+        60,
+        380,
+        4,
+        colors[8],
+        "chaos, you are the captain of a"
+      );
+      var st27 = new Text(
+        60,
+        410,
+        4,
+        colors[8],
+        "spaceship. your main task was"
+      );
+      var st28 = new Text(
+        60,
+        440,
+        4,
+        colors[8],
+        "to monitor the state of general"
+      );
+      var st29 = new Text(
+        60,
+        470,
+        4,
+        colors[8],
+        "military conflict, detection of"
+      );
+      var st30 = new Text(
+        60,
+        500,
+        4,
+        colors[8],
+        "new hotbeds of active action"
+      );
+      var st31 = new Text(60, 530, 4, colors[8], "and transfer information to");
+      function story3() {
+        clear();
+        background();
+        msgBg();
+        btnS = buttons.length = 0;
+        btnS = new Button(100, 100, "right", "setStage(story4)");
+        btnSTxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnSTxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnS);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnSTxtsh.draw();
+        btnSTxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        stsh24.draw();
+        stsh25.draw();
+        stsh26.draw();
+        stsh27.draw();
+        stsh28.draw();
+        stsh29.draw();
+        stsh30.draw();
+        stsh31.draw();
+        st24.draw();
+        st25.draw();
+        st26.draw();
+        st27.draw();
+        st28.draw();
+        st29.draw();
+        st30.draw();
+        st31.draw();
+      }
+      var stsh32 = new Text(
+        62,
+        322,
+        4,
+        colors[10],
+        "your base. and now the command"
+      );
+      var stsh33 = new Text(
+        62,
+        352,
+        4,
+        colors[10],
+        "does not know, what to do and"
+      );
+      var stsh34 = new Text(
+        62,
+        382,
+        4,
+        colors[10],
+        "your team is also uncoordinated"
+      );
+      var stsh35 = new Text(
+        62,
+        412,
+        4,
+        colors[10],
+        "and chaotic, like all other"
+      );
+      var stsh36 = new Text(
+        62,
+        442,
+        4,
+        colors[10],
+        "people on earth. in addition,"
+      );
+      var stsh37 = new Text(
+        62,
+        472,
+        4,
+        colors[10],
+        "your rocket module for a long"
+      );
+      var stsh38 = new Text(
+        62,
+        502,
+        4,
+        colors[10],
+        "time does not work properly,"
+      );
+      var stsh39 = new Text(
+        62,
+        532,
+        4,
+        colors[10],
+        "through time and at all as it"
+      );
+      var st32 = new Text(
+        60,
+        320,
+        4,
+        colors[8],
+        "your base. and now the command"
+      );
+      var st33 = new Text(
+        60,
+        350,
+        4,
+        colors[8],
+        "does not know, what to do and"
+      );
+      var st34 = new Text(
+        60,
+        380,
+        4,
+        colors[8],
+        "your team is also uncoordinated"
+      );
+      var st35 = new Text(60, 410, 4, colors[8], "and chaotic, like all other");
+      var st36 = new Text(
+        60,
+        440,
+        4,
+        colors[8],
+        "people on earth. in addition,"
+      );
+      var st37 = new Text(
+        60,
+        470,
+        4,
+        colors[8],
+        "your rocket module for a long"
+      );
+      var st38 = new Text(
+        60,
+        500,
+        4,
+        colors[8],
+        "time does not work properly,"
+      );
+      var st39 = new Text(
+        60,
+        530,
+        4,
+        colors[8],
+        "through time and at all as it"
+      );
+      function story4() {
+        clear();
+        background();
+        msgBg();
+        btnS = buttons.length = 0;
+        btnS = new Button(100, 100, "right", "setStage(story5)");
+        btnSTxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnSTxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnS);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnSTxtsh.draw();
+        btnSTxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        stsh32.draw();
+        stsh33.draw();
+        stsh34.draw();
+        stsh35.draw();
+        stsh36.draw();
+        stsh37.draw();
+        stsh38.draw();
+        stsh39.draw();
+        st32.draw();
+        st33.draw();
+        st34.draw();
+        st35.draw();
+        st36.draw();
+        st37.draw();
+        st38.draw();
+        st39.draw();
+      }
+      var stsh40 = new Text(
+        62,
+        322,
+        4,
+        colors[10],
+        "wants. you make a decision and"
+      );
+      var stsh41 = new Text(
+        62,
+        352,
+        4,
+        colors[10],
+        "your actions determine the"
+      );
+      var stsh42 = new Text(
+        62,
+        382,
+        4,
+        colors[10],
+        "future of earth with all its"
+      );
+      var stsh43 = new Text(62, 412, 4, colors[10], "inhabitants.");
+      var st40 = new Text(
+        60,
+        320,
+        4,
+        colors[8],
+        "wants. you make a decision and"
+      );
+      var st41 = new Text(60, 350, 4, colors[8], "your actions determine the");
+      var st42 = new Text(
+        60,
+        380,
+        4,
+        colors[8],
+        "future of earth with all its"
+      );
+      var st43 = new Text(60, 410, 4, colors[8], "inhabitants.");
+      function story5() {
+        clear();
+        background();
+        msgBg();
+        btnS = buttons.length = 0;
+        btnS = new Button(100, 100, "right", "setStage(msg)");
+        btnSTxtsh = new Text(302, 187, 5, colors[10], "next");
+        btnSTxt = new Text(300, 185, 5, colors[8], "next");
+        buttons.push(btnS);
+        for (q = 0; q < buttons.length; q += 1) {
+          buttons[q].draw();
+        }
+        btnSTxtsh.draw();
+        btnSTxt.draw();
+        btninend0.grid.draw();
+        btninend1.grid.draw();
+        btninend2.grid.draw();
+        stsh40.draw();
+        stsh41.draw();
+        stsh42.draw();
+        stsh43.draw();
+        st40.draw();
+        st41.draw();
+        st42.draw();
+        st43.draw();
+      }
+      function Button(x, y, type, src, set) {
+        this.x = x;
+        this.y = y;
+        this.src = src;
+        if (type === "right") {
+          this.draw = function () {
+            btnForm(
+              this.x,
+              this.y,
+              this.x + 120,
+              this.y,
+              this.x + 140,
+              this.y + 20,
+              width - 360,
+              this.y + 20,
+              width - 340,
+              this.y,
+              width - 140,
+              this.y,
+              width - 100,
+              this.y + 100,
+              width - 140,
+              this.y + 200,
+              width - 340,
+              this.y + 200,
+              width - 360,
+              this.y + 180,
+              this.x + 140,
+              this.y + 180,
+              this.x + 120,
+              this.y + 200,
+              this.x,
+              this.y + 200,
+              this.x - 40,
+              this.y + 100,
+              12,
+              "rgba(39, 10, 83, .5)"
+            );
+            btnForm(
+              this.x,
+              this.y,
+              this.x + 120,
+              this.y,
+              this.x + 140,
+              this.y + 20,
+              width - 360,
+              this.y + 20,
+              width - 340,
+              this.y,
+              width - 140,
+              this.y,
+              width - 100,
+              this.y + 100,
+              width - 140,
+              this.y + 200,
+              width - 340,
+              this.y + 200,
+              width - 360,
+              this.y + 180,
+              this.x + 140,
+              this.y + 180,
+              this.x + 120,
+              this.y + 200,
+              this.x,
+              this.y + 200,
+              this.x - 40,
+              this.y + 100,
+              16,
+              "rgba(39, 10, 83, .3)"
+            );
+            btnForm(
+              this.x,
+              this.y,
+              this.x + 120,
+              this.y,
+              this.x + 140,
+              this.y + 20,
+              width - 360,
+              this.y + 20,
+              width - 340,
+              this.y,
+              width - 140,
+              this.y,
+              width - 100,
+              this.y + 100,
+              width - 140,
+              this.y + 200,
+              width - 340,
+              this.y + 200,
+              width - 360,
+              this.y + 180,
+              this.x + 140,
+              this.y + 180,
+              this.x + 120,
+              this.y + 200,
+              this.x,
+              this.y + 200,
+              this.x - 40,
+              this.y + 100,
+              false,
+              false,
+              "#440F94"
+            );
+            btnForm(
+              this.x,
+              this.y,
+              this.x + 120,
+              this.y,
+              this.x + 140,
+              this.y + 20,
+              width - 360,
+              this.y + 20,
+              width - 340,
+              this.y,
+              width - 140,
+              this.y,
+              width - 100,
+              this.y + 100,
+              width - 140,
+              this.y + 200,
+              width - 340,
+              this.y + 200,
+              width - 360,
+              this.y + 180,
+              this.x + 140,
+              this.y + 180,
+              this.x + 120,
+              this.y + 200,
+              this.x,
+              this.y + 200,
+              this.x - 40,
+              this.y + 100,
+              3,
+              "#370D77"
+            );
+            simpleLine(
+              this.x + 20,
+              this.y + 20,
+              this.x + 100,
+              this.y + 20,
+              12,
+              "rgba(39, 10, 83, .9)",
+              false
+            );
+            simpleLine(
+              this.x + 100,
+              this.y + 20,
+              this.x + 170,
+              this.y + 100,
+              12,
+              "rgba(39, 10, 83, .9)",
+              false
+            );
+            simpleLine(
+              this.x + 170,
+              this.y + 100,
+              this.x + 100,
+              this.y + 180,
+              12,
+              "rgba(39, 10, 83, .9)",
+              false
+            );
+            simpleLine(
+              this.x + 100,
+              this.y + 180,
+              this.x + 20,
+              this.y + 180,
+              12,
+              "rgba(93, 63, 137, .9)",
+              false
+            );
+            simpleLine(
+              this.x + 20,
+              this.y + 180,
+              this.x - 15,
+              this.y + 100,
+              12,
+              "rgba(110, 96, 131, .9)",
+              false
+            );
+            simpleLine(
+              this.x - 15,
+              this.y + 100,
+              this.x + 20,
+              this.y + 20,
+              12,
+              "rgba(93, 63, 137, .9)",
+              false
+            );
+            cell(
+              this.x + 20,
+              this.y + 20,
+              this.x + 100,
+              this.y + 20,
+              this.x + 170,
+              this.y + 100,
+              this.x + 100,
+              this.y + 180,
+              this.x + 20,
+              this.y + 180,
+              this.x - 15,
+              this.y + 100,
+              12,
+              "rgba(39, 10, 83, .5)"
+            );
+            cell(
+              this.x + 20,
+              this.y + 20,
+              this.x + 100,
+              this.y + 20,
+              this.x + 170,
+              this.y + 100,
+              this.x + 100,
+              this.y + 180,
+              this.x + 20,
+              this.y + 180,
+              this.x - 15,
+              this.y + 100,
+              16,
+              "rgba(39, 10, 83, .3)"
+            );
+            cell(
+              this.x + 20,
+              this.y + 20,
+              this.x + 100,
+              this.y + 20,
+              this.x + 170,
+              this.y + 100,
+              this.x + 100,
+              this.y + 180,
+              this.x + 20,
+              this.y + 180,
+              this.x - 15,
+              this.y + 100,
+              false,
+              false,
+              "rgba(51, 34, 74, 1)"
+            );
+            cell(
+              this.x + 20,
+              this.y + 20,
+              this.x + 100,
+              this.y + 20,
+              this.x + 170,
+              this.y + 100,
+              this.x + 100,
+              this.y + 180,
+              this.x + 20,
+              this.y + 180,
+              this.x - 15,
+              this.y + 100,
+              5,
+              "#2E1E44"
+            );
+            simpleLine(
+              this.x + 20,
+              this.y + 20,
+              this.x + 100,
+              this.y + 20,
+              4,
+              "rgba(93, 63, 137, .75)",
+              false
+            );
+            simpleLine(
+              this.x + 100,
+              this.y + 20,
+              this.x + 170,
+              this.y + 100,
+              4,
+              "rgba(110, 96, 131, .75)",
+              false
+            );
+            simpleLine(
+              this.x + 170,
+              this.y + 100,
+              this.x + 100,
+              this.y + 180,
+              4,
+              "rgba(93, 63, 137, .75)",
+              false
+            );
+            simpleLine(
+              this.x + 100,
+              this.y + 180,
+              this.x + 20,
+              this.y + 180,
+              4,
+              "rgba(39, 10, 83, .75)",
+              false
+            );
+            simpleLine(
+              this.x + 20,
+              this.y + 180,
+              this.x - 15,
+              this.y + 100,
+              4,
+              "rgba(39, 10, 83, .75)",
+              false
+            );
+            simpleLine(
+              this.x - 15,
+              this.y + 100,
+              this.x + 20,
+              this.y + 20,
+              4,
+              "rgba(39, 10, 83, .75)",
+              false
+            );
+            simpleLine(
+              this.x + 4,
+              this.y,
+              this.x + 120,
+              this.y,
+              3,
+              "rgba(110, 96, 131, .9)"
+            );
+            simpleLine(
+              this.x + 122,
+              this.y + 2,
+              this.x + 138,
+              this.y + 18,
+              5,
+              "rgba(110, 96, 131, .75)"
+            );
+            simpleLine(
+              this.x + 140,
+              this.y + 20,
+              width - 362,
+              this.y + 20,
+              3,
+              "rgba(110, 96, 131, .75)"
+            );
+            simpleLine(
+              width - 340,
+              this.y,
+              width - 140,
+              this.y,
+              3,
+              "rgba(110, 96, 131, .75)"
+            );
+            simpleLine(
+              width - 138,
+              this.y + 2,
+              width - 100,
+              this.y + 100,
+              5,
+              "rgba(110, 96, 131, .75)"
+            );
+            simpleLine(
+              width - 100,
+              this.y + 100,
+              width - 138,
+              this.y + 198,
+              4,
+              "rgba(110, 96, 131, .75)"
+            );
+            simpleLine(
+              this.x + 137,
+              this.y + 182,
+              this.x + 122,
+              this.y + 198,
+              3,
+              "rgba(110, 96, 131, .75)"
+            );
+          };
+          this.handle = function (mouse) {
+            context.save();
+            btnForm(
+              this.x,
+              this.y,
+              this.x + 120,
+              this.y,
+              this.x + 140,
+              this.y + 20,
+              width - 360,
+              this.y + 20,
+              width - 340,
+              this.y,
+              width - 140,
+              this.y,
+              width - 100,
+              this.y + 100,
+              width - 140,
+              this.y + 200,
+              width - 340,
+              this.y + 200,
+              width - 360,
+              this.y + 180,
+              this.x + 140,
+              this.y + 180,
+              this.x + 120,
+              this.y + 200,
+              this.x,
+              this.y + 200,
+              this.x - 40,
+              this.y + 100,
+              false,
+              false,
+              false,
+              true
+            );
+            if (context.isPointInPath(mouse.x, mouse.y)) {
+              eval(this.src);
+              if (set) {
+                setLevel();
+              }
+              buttons.length = 0;
+            }
+            context.restore();
+          };
+        } else if (type === "left") {
+          //
+        }
+      }
+      function cell(
+        x1,
+        y1,
+        x2,
+        y2,
+        x3,
+        y3,
+        x4,
+        y4,
+        x5,
+        y5,
+        x6,
+        y6,
+        lw,
+        sc,
+        fc
+      ) {
+        if (lw) {
+          context.lineWidth = lw;
+          context.lineCap = "butt";
+        }
+        if (sc) {
+          context.strokeStyle = sc;
+        }
+        if (fc) {
+          context.fillStyle = fc;
+        }
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(x2, y2);
+        context.lineTo(x3, y3);
+        context.lineTo(x4, y4);
+        context.lineTo(x5, y5);
+        context.lineTo(x6, y6);
+        context.closePath();
+        if (sc) {
+          context.stroke();
+        }
+        if (fc) {
+          context.fill();
+        }
+      }
+      function btnForm(
+        x1,
+        y1,
+        x2,
+        y2,
+        x3,
+        y3,
+        x4,
+        y4,
+        x5,
+        y5,
+        x6,
+        y6,
+        x7,
+        y7,
+        x8,
+        y8,
+        x9,
+        y9,
+        x10,
+        y10,
+        x11,
+        y11,
+        x12,
+        y12,
+        x13,
+        y13,
+        x14,
+        y14,
+        lw,
+        sc,
+        fc,
+        handlePath
+      ) {
+        if (lw) {
+          context.lineWidth = lw;
+          context.lineCap = "butt";
+        }
+        if (sc) {
+          context.strokeStyle = sc;
+        }
+        if (fc) {
+          context.fillStyle = fc;
+        }
+        if (handlePath) {
+          context.beginPath();
+          context.moveTo(x1, y1);
+          context.lineTo(x2, y2);
+          context.lineTo(x3, y3);
+          context.lineTo(x4, y4);
+          context.lineTo(x5, y5);
+          context.lineTo(x6, y6);
+          context.lineTo(x7, y7);
+          context.lineTo(x8, y8);
+          context.lineTo(x9, y9);
+          context.lineTo(x10, y10);
+          context.lineTo(x11, y11);
+          context.lineTo(x12, y12);
+          context.lineTo(x13, y13);
+          context.lineTo(x14, y14);
+          context.closePath();
+        }
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(x2, y2);
+        context.lineTo(x3, y3);
+        context.lineTo(x4, y4);
+        context.lineTo(x5, y5);
+        context.lineTo(x6, y6);
+        context.lineTo(x7, y7);
+        context.lineTo(x8, y8);
+        context.lineTo(x9, y9);
+        context.lineTo(x10, y10);
+        context.lineTo(x11, y11);
+        context.lineTo(x12, y12);
+        context.lineTo(x13, y13);
+        context.lineTo(x14, y14);
+        context.closePath();
+        if (sc) {
+          context.stroke();
+        }
+        if (fc) {
+          context.fill();
+        }
+      }
+      function form(
+        x1,
+        y1,
+        x2,
+        y2,
+        x3,
+        y3,
+        x4,
+        y4,
+        x5,
+        y5,
+        x6,
+        y6,
+        x7,
+        y7,
+        x8,
+        y8,
+        x9,
+        y9,
+        x10,
+        y10,
+        x11,
+        y11,
+        x12,
+        y12,
+        x13,
+        y13,
+        x14,
+        y14,
+        x15,
+        y15,
+        x16,
+        y16,
+        x17,
+        y17,
+        x18,
+        y18,
+        x19,
+        y19,
+        x20,
+        y20,
+        lw,
+        sc,
+        fc
+      ) {
+        if (lw) {
+          context.lineWidth = lw;
+          context.lineCap = "butt";
+        }
+        if (sc) {
+          context.strokeStyle = sc;
+        }
+        if (fc) {
+          context.fillStyle = fc;
+        }
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(x2, y2);
+        context.lineTo(x3, y3);
+        context.lineTo(x4, y4);
+        context.lineTo(x5, y5);
+        context.lineTo(x6, y6);
+        context.lineTo(x7, y7);
+        context.lineTo(x8, y8);
+        context.lineTo(x9, y9);
+        context.lineTo(x10, y10);
+        context.lineTo(x11, y11);
+        context.lineTo(x12, y12);
+        context.lineTo(x13, y13);
+        context.lineTo(x14, y14);
+        context.lineTo(x15, y15);
+        context.lineTo(x16, y16);
+        context.lineTo(x17, y17);
+        context.lineTo(x18, y18);
+        context.lineTo(x19, y19);
+        context.lineTo(x20, y20);
+        context.closePath();
+        if (sc) {
+          context.stroke();
+        }
+        if (fc) {
+          context.fill();
+        }
+      }
+      function Letter(x, y, w, c, m) {
+        self.x = x;
+        self.y = y;
+        self.w = w;
+        self.c = c;
+        self.m = m;
+        this.grid = {
+          nodes: [],
+          add: function (x, y, w, h, fc, sc, lw) {
+            var node = new Rect(x, y, w, h, fc, sc, lw);
+            this.nodes.push(node);
+          },
+          create: function () {
+            for (var Q in self.m.tiles) {
+              for (var qu in self.m.tiles[Q]) {
+                var tile = self.m.tiles[Q][qu];
+                var X = self.x + qu * self.w;
+                var Y = self.y + Q * self.w;
+                if (tile === 1) {
+                  this.add(X, Y, self.w, self.w, self.c);
+                }
+              }
+            }
+          },
+          draw: function () {
+            for (var node in this.nodes) {
+              this.nodes[node].draw();
+            }
+          },
+        };
+      }
+      function Text(x, y, w, c, s) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.c = c;
+        this.s = s;
+        this.a = [];
+        this.ma = [];
+        this.letters = [];
+        this.lw = this.w * 7;
+        for (q = 0; q < this.s.length; q += 1) {
+          this.a[q] = this.s.charCodeAt(q);
+        }
+        for (q = 0; q < this.a.length; q += 1) {
+          switch (this.a[q]) {
+            case 32:
+              this.ma[q] = fontMap[36];
+              break;
+            case 39:
+              this.ma[q] = fontMap[39];
+              break;
+            case 44:
+              this.ma[q] = fontMap[38];
+              break;
+            case 46:
+              this.ma[q] = fontMap[37];
+              break;
+            case 48:
+              this.ma[q] = fontMap[0];
+              break;
+            case 49:
+              this.ma[q] = fontMap[1];
+              break;
+            case 50:
+              this.ma[q] = fontMap[2];
+              break;
+            case 51:
+              this.ma[q] = fontMap[3];
+              break;
+            case 52:
+              this.ma[q] = fontMap[4];
+              break;
+            case 53:
+              this.ma[q] = fontMap[5];
+              break;
+            case 54:
+              this.ma[q] = fontMap[6];
+              break;
+            case 55:
+              this.ma[q] = fontMap[7];
+              break;
+            case 56:
+              this.ma[q] = fontMap[8];
+              break;
+            case 57:
+              this.ma[q] = fontMap[9];
+              break;
+            case 97:
+              this.ma[q] = fontMap[10];
+              break;
+            case 98:
+              this.ma[q] = fontMap[11];
+              break;
+            case 99:
+              this.ma[q] = fontMap[12];
+              break;
+            case 100:
+              this.ma[q] = fontMap[13];
+              break;
+            case 101:
+              this.ma[q] = fontMap[14];
+              break;
+            case 102:
+              this.ma[q] = fontMap[15];
+              break;
+            case 103:
+              this.ma[q] = fontMap[16];
+              break;
+            case 104:
+              this.ma[q] = fontMap[17];
+              break;
+            case 105:
+              this.ma[q] = fontMap[18];
+              break;
+            case 106:
+              this.ma[q] = fontMap[19];
+              break;
+            case 107:
+              this.ma[q] = fontMap[20];
+              break;
+            case 108:
+              this.ma[q] = fontMap[21];
+              break;
+            case 109:
+              this.ma[q] = fontMap[22];
+              break;
+            case 110:
+              this.ma[q] = fontMap[23];
+              break;
+            case 111:
+              this.ma[q] = fontMap[24];
+              break;
+            case 112:
+              this.ma[q] = fontMap[25];
+              break;
+            case 113:
+              this.ma[q] = fontMap[26];
+              break;
+            case 114:
+              this.ma[q] = fontMap[27];
+              break;
+            case 115:
+              this.ma[q] = fontMap[28];
+              break;
+            case 116:
+              this.ma[q] = fontMap[29];
+              break;
+            case 117:
+              this.ma[q] = fontMap[30];
+              break;
+            case 118:
+              this.ma[q] = fontMap[31];
+              break;
+            case 119:
+              this.ma[q] = fontMap[32];
+              break;
+            case 120:
+              this.ma[q] = fontMap[33];
+              break;
+            case 121:
+              this.ma[q] = fontMap[34];
+              break;
+            case 122:
+              this.ma[q] = fontMap[35];
+              break;
+            default:
+              console.log("Error!");
+          }
+        }
+        for (q = 0; q < this.a.length; q += 1) {
+          this.letters[q] = new Letter(
+            this.x + this.lw * q,
+            this.y,
+            this.w,
+            this.c,
+            this.ma[q]
+          );
+          this.letters[q].grid.create();
+        }
+        this.draw = function () {
+          for (q = 0; q < this.letters.length; q += 1) {
+            this.letters[q].grid.draw();
+          }
+        };
+      }
+      function Rect(x, y, w, h, fc, sc, lw) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.fc = fc;
+        this.sc = sc;
+        this.lw = lw;
+        this.draw = function () {
+          if (fc) {
+            context.fillStyle = this.fc;
+            context.fillRect(this.x, this.y, this.w, this.h);
+          }
+          if (sc) {
+            if (lw) {
+              context.lineWidth = this.lw;
+            } else {
+              context.lineWidth = 1;
+            }
+            context.strokeStyle = this.sc;
+            context.strokeRect(this.x, this.y, this.w, this.h);
+          }
+        };
+      }
+      function Circle(x, y, r, fc, sc, lw) {
+        this.x = x;
+        this.y = y;
+        this.r = r;
+        this.fc = fc;
+        this.sc = sc;
+        this.lw = lw;
+        this.draw = function () {
+          if (fc) {
+            context.fillStyle = this.fc;
+            context.beginPath();
+            context.arc(this.x, this.y, this.r, 0, 2 * PI, false);
+            context.fill();
+          }
+          if (sc) {
+            if (lw) {
+              context.lineWidth = this.lw;
+            } else {
+              context.lineWidth = 1;
+            }
+            context.strokeStyle = this.sc;
+            context.beginPath();
+            context.arc(this.x, this.y, this.r, 0, 2 * PI, false);
+            context.stroke();
+          }
+        };
+      }
+      function randomR(min, max) {
+        var r = (Math.random() * (1 + max - min) + min) ^ 0;
+        return r;
+      }
+      function randomNC() {
+        var rc;
+        var r = (Math.random() * 3) ^ 0;
+        switch (r) {
+          case 0:
+            rc = colors[28];
+            break;
+          case 1:
+            rc = colors[29];
+            break;
+          case 2:
+            rc = colors[30];
+            break;
+        }
+        return rc;
+      }
+      function initBg() {
+        nebulas.length = 0;
+        nebulasQ = randomR(4, 7);
+        for (q = 0; q < nebulasQ; q += 1) {
+          nebulas[q] = new Nebula(randomPosX(30), randomPosY(30));
+        }
+        stars.length = 0;
+        for (var q = 0; q < 5; q += 1) {
+          var s0 = new Star(
+            randomPosX(w0),
+            randomPosY(w0),
+            w0,
+            randomStarColor()
+          );
+          stars.push(s0);
+        }
+        for (q = 0; q < 10; q += 1) {
+          var s1 = new Star(
+            randomPosX(w1),
+            randomPosY(w1),
+            w1,
+            randomStarColor()
+          );
+          stars.push(s1);
+        }
+        for (q = 0; q < 20; q += 1) {
+          var s3 = new Star(
+            randomPosX(w2),
+            randomPosY(w2),
+            w2,
+            randomStarColor()
+          );
+          stars.push(s3);
+        }
+      }
+      var nebulas = [];
+      var nebulasQ = randomR(4, 7);
+      for (q = 0; q < nebulasQ; q += 1) {
+        nebulas[q] = new Nebula(randomPosX(30), randomPosY(30));
+      }
+      function Nebula(x, y) {
+        this.x = x;
+        this.y = y;
+        this.a = [];
+        this.q = randomR(10, 15);
+        self.ca = [];
+        for (Q = 0; Q < this.q; Q += 1) {
+          self.ca[Q] = {};
+          self.ca[Q].r = randomR(30, 50);
+        }
+        for (Q = 0; Q < this.q; Q += 1) {
+          self.ca[Q].px = Math.abs(
+            this.x + randomR(-self.ca[Q].r, self.ca[Q].r)
+          );
+          self.ca[Q].py = Math.abs(
+            this.y + randomR(-self.ca[Q].r, self.ca[Q].r)
+          );
+        }
+        for (Q = 0; Q < this.q; Q += 1) {
+          self.ca[Q].g = function () {
+            var G = context.createRadialGradient(
+              self.ca[Q].px,
+              self.ca[Q].py,
+              randomR(2, 10),
+              self.ca[Q].px,
+              self.ca[Q].py,
+              self.ca[Q].r
+            );
+            G.addColorStop(0, randomNC());
+            G.addColorStop(1, "rgba(0, 0, 0, 0)");
+            return G;
+          };
+        }
+        for (Q = 0; Q < this.q; Q += 1) {
+          this.a[Q] = new Circle(
+            self.ca[Q].px,
+            self.ca[Q].py,
+            self.ca[Q].r,
+            self.ca[Q].g()
+          );
+        }
+        this.draw = function () {
+          for (Q = 0; Q < this.a.length; Q += 1) {
+            this.a[Q].draw();
+          }
+        };
+      }
+      function Star(x, y, w, c) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.c = c;
+        var r = (Math.random() * 2) ^ 0;
+        this.draw = function () {
+          if (r === 0) {
+            var lTop = new Line(
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              this.x + this.w / 2,
+              this.y + this.w / 2 - this.w * 0.75,
+              this.w / 4,
+              this.c
+            );
+            var lRight = new Line(
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              this.x + this.w / 2 + this.w * 0.75,
+              this.y + this.w / 2,
+              this.w / 4,
+              this.c
+            );
+            var lBottom = new Line(
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              this.x + this.w / 2,
+              this.y + this.w / 2 + this.w * 0.75,
+              this.w / 4,
+              this.c
+            );
+            var lLeft = new Line(
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              this.x + this.w / 2 - this.w * 0.75,
+              this.y + this.w / 2,
+              this.w / 4,
+              this.c
+            );
+            lTop.draw();
+            lRight.draw();
+            lBottom.draw();
+            lLeft.draw();
+            var lTopT = new Line(
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              this.x + this.w / 2,
+              this.y + this.w / 2 - this.w * 1.5,
+              this.w / 6,
+              this.c
+            );
+            var lRightT = new Line(
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              this.x + this.w / 2 + this.w * 1.5,
+              this.y + this.w / 2,
+              this.w / 6,
+              this.c
+            );
+            var lBottomT = new Line(
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              this.x + this.w / 2,
+              this.y + this.w / 2 + this.w * 1.5,
+              this.w / 6,
+              this.c
+            );
+            var lLeftT = new Line(
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              this.x + this.w / 2 - this.w * 1.5,
+              this.y + this.w / 2,
+              this.w / 6,
+              this.c
+            );
+            lTopT.draw();
+            lRightT.draw();
+            lBottomT.draw();
+            lLeftT.draw();
+            var gradient = context.createRadialGradient(
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              1,
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              this.w
+            );
+            gradient.addColorStop(0, this.c);
+            gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+            context.fillStyle = gradient;
+            context.fillRect(this.x, this.y, this.w, this.w);
+          } else {
+            var gradient = context.createRadialGradient(
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              1,
+              this.x + this.w / 2,
+              this.y + this.w / 2,
+              this.w
+            );
+            gradient.addColorStop(0, this.c);
+            gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+            context.fillStyle = gradient;
+            context.fillRect(this.x, this.y, this.w, this.w);
+          }
+        };
+      }
+      function randomPosX(size) {
+        var r = (Math.random() * width - size * 2) ^ 0;
+        return r;
+      }
+      function randomPosY(size) {
+        var r = (Math.random() * height - size * 2) ^ 0;
+        return r;
+      }
+      function randomStarColor() {
+        var r = (Math.random() * 10) ^ 0;
+        var c = "";
+        switch (r) {
+          case 0:
+            c = colors[16];
+            break;
+          case 1:
+            c = colors[17];
+            break;
+          case 2:
+            c = colors[18];
+            break;
+          case 3:
+            c = colors[19];
+            break;
+          case 4:
+            c = colors[20];
+            break;
+          case 5:
+            c = colors[21];
+            break;
+          case 6:
+            c = colors[22];
+            break;
+          case 7:
+            c = colors[23];
+            break;
+          case 8:
+            c = colors[24];
+            break;
+          case 9:
+            c = colors[25];
+            break;
+        }
+        return c;
+      }
+      var stars = [];
+      var w0 = 5;
+      var w1 = 4;
+      var w2 = 3;
+      for (var q = 0; q < 5; q += 1) {
+        var s0 = new Star(
+          randomPosX(w0),
+          randomPosY(w0),
+          w0,
+          randomStarColor()
+        );
+        stars.push(s0);
+      }
+      for (q = 0; q < 10; q += 1) {
+        var s1 = new Star(
+          randomPosX(w1),
+          randomPosY(w1),
+          w1,
+          randomStarColor()
+        );
+        stars.push(s1);
+      }
+      for (q = 0; q < 20; q += 1) {
+        var s3 = new Star(
+          randomPosX(w2),
+          randomPosY(w2),
+          w2,
+          randomStarColor()
+        );
+        stars.push(s3);
+      }
+      function clear() {
+        context.clearRect(0, 0, width, height);
+      }
+      function Line(x1, y1, x2, y2, w, c) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.w = w;
+        this.c = c;
+        this.draw = function () {
+          context.strokeStyle = this.c;
+          context.lineWidth = this.w;
+          context.lineCap = "square";
+          context.beginPath();
+          context.moveTo(this.x1, this.y1);
+          context.lineTo(this.x2, this.y2);
+          context.stroke();
+        };
+      }
+      function simpleLine(x1, y1, x2, y2, w, c, s) {
+        context.strokeStyle = c;
+        context.lineWidth = w;
+        if (s) {
+          context.lineCap = "square";
+        } else {
+          context.lineCap = "round";
+        }
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(x2, y2);
+        context.stroke();
+      }
+      function background() {
+        var gradient = context.createRadialGradient(
+          width / 2,
+          height * 2 + 50,
+          2,
+          width / 2,
+          height * 2 + 50,
+          height * 2
+        );
+        gradient.addColorStop(0, "#5947ca");
+        gradient.addColorStop(1, "#1e1e1e");
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, width, height);
+        context.globalCompositeOperation = "lighter";
+        for (q = 0; q < nebulas.length; q += 1) {
+          nebulas[q].draw();
+        }
+        context.globalCompositeOperation = "source-over";
+        for (q = 0; q < stars.length; q += 1) {
+          stars[q].draw();
+        }
+      }
+      function SpaceShip() {
+        this.dirX = 0;
+        this.grid = {
+          nodes: [],
+          add: function (x, y, w, h, fc, sc, lw) {
+            var node = new Rect(x, y, w, h, fc, sc, lw);
+            this.nodes.push(node);
+          },
+          create: function (map) {
+            this.map = map;
+            for (var Q in this.map.tiles) {
+              for (var qu in this.map.tiles[Q]) {
+                var tile = this.map.tiles[Q][qu];
+                var x = width / 2 - (w * 15) / 2 + qu * w;
+                var y = height - w * 9 - w + Q * w;
+                if (tile == 1) {
+                  this.add(x, y, w, w, colors[4]);
+                }
+                if (tile == 2) {
+                  this.add(x, y, w, w, false, colors[4], 2);
+                }
+              }
+            }
+          },
+          draw: function () {
+            for (var node in this.nodes) {
+              this.nodes[node].draw();
+            }
+          },
+        };
+        this.setDir = function (dir) {
+          this.dirX = dir;
+        };
+        this.move = function (dir) {
+          for (var node in this.grid.nodes) {
+            this.grid.nodes[node].x += this.dirX * 4;
+          }
+        };
+      }
+      function Rocket(x, y) {
+        this.x = x;
+        this.y = y;
+        this.w = 3;
+        this.destroy = false;
+        this.draw = function () {
+          var r0 = new Rect(
+            this.x,
+            this.y,
+            this.w,
+            this.w * 2,
+            false,
+            colors[14],
+            2
+          );
+          r0.draw();
+        };
+        this.move = function () {
+          this.y -= 4;
+        };
+        this.demolish = function () {
+          this.destroy = true;
+        };
+        this.impact = function (inviter, qu, q) {
+          this.inviter = inviter;
+          this.qu = qu;
+          this.q = q;
+          this.r = false;
+          for (var node in this.inviter[this.qu][this.q].grid.nodes) {
+            if (
+              this.x >=
+                this.inviter[this.qu][this.q].grid.nodes[node].x -
+                  (w * 9) / 2 &&
+              this.x <=
+                this.inviter[this.qu][this.q].grid.nodes[node].x +
+                  (w * 9) / 2 &&
+              this.y >=
+                this.inviter[this.qu][this.q].grid.nodes[node].y -
+                  (w * 9) / 2 &&
+              this.y <=
+                this.inviter[this.qu][this.q].grid.nodes[node].y + (w * 9) / 2
+            ) {
+              this.r = true;
+            }
+          }
+          if (this.r) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+      }
+      function Mine(x, y) {
+        this.x = x;
+        this.y = y;
+        this.R = 3;
+        this.destroy = false;
+        this.draw = function () {
+          var c0 = new Circle(this.x, this.y, this.R, "red", "white", 2);
+          c0.draw();
+        };
+        this.move = function () {
+          this.y += 4;
+        };
+        this.demolish = function () {
+          this.destroy = true;
+        };
+        this.impact = function (ship) {
+          this.ship = ship;
+          this.r = false;
+          for (var node in this.ship.grid.nodes) {
+            if (
+              this.x >= this.ship.grid.nodes[node].x - (w * 9) / 2 &&
+              this.x <= this.ship.grid.nodes[node].x + (w * 9) / 2 &&
+              this.y >= this.ship.grid.nodes[node].y - (w * 4) / 2 &&
+              this.y <= this.ship.grid.nodes[node].y + (w * 4) / 2
+            ) {
+              this.r = true;
+            }
+          }
+          if (this.r) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+      }
+      function randomSpeed() {
+        var rc = (Math.random() * 2) ^ 0;
+        var r = (Math.random() * 6) ^ 0;
+        if (rc == 0) {
+          if (r == 0) {
+            return r + 1;
+          } else {
+            return r;
+          }
+        } else {
+          if (r == 0) {
+            return r - 1;
+          } else {
+            return -r;
+          }
+        }
+      }
+      function Inviter(x, y, color) {
+        self.x = x;
+        self.y = y;
+        self.color = color;
+        this.dirX = 1;
+        this.grid = {
+          nodes: [],
+          add: function (x, y, w, h, fc, sc, lw) {
+            var node = new Rect(x, y, w, h, fc, sc, lw);
+            this.nodes.push(node);
+          },
+          create: function (map) {
+            this.map = map;
+            for (var Q in this.map.tiles) {
+              for (var qu in this.map.tiles[Q]) {
+                var tile = this.map.tiles[Q][qu];
+                var xx = self.x + qu * w;
+                var yy = self.y + Q * w;
+                if (tile == 1) {
+                  this.add(xx, yy, w, w, self.color);
+                }
+                if (tile == 2) {
+                  this.add(xx, yy, w, w, false, self.color, 2);
+                }
+              }
+            }
+          },
+          draw: function () {
+            for (var node in this.nodes) {
+              this.nodes[node].draw();
+            }
+          },
+        };
+        this.draw = function () {};
+        this.move = function () {
+          for (var node in this.grid.nodes) {
+            this.grid.nodes[node].x += this.dirX;
+          }
+        };
+        this.stepCloser = function () {
+          for (var node in this.grid.nodes) {
+            this.grid.nodes[node].y += w * 9;
+          }
+          this.dirX *= -1;
+        };
+        this.growStronger = function () {};
+        this.demolish = function () {};
+      }
+      function randomExpColor() {
+        var rc;
+        var r = (Math.random() * 3) ^ 0;
+        switch (r) {
+          case 0:
+            rc = colors[31];
+            break;
+          case 1:
+            rc = colors[32];
+            break;
+          case 2:
+            rc = colors[33];
+            break;
+        }
+        return rc;
+      }
+      function expCircle(x, y, r, c) {
+        this.x = x;
+        this.y = y;
+        this.r = r;
+        this.c = c;
+        this.speedX = randomSpeed();
+        this.speedY = randomSpeed();
+        this.draw = function () {
+          context.fillStyle = this.c;
+          context.beginPath();
+          context.arc(this.x, this.y, this.r, 0, 2 * PI, false);
+          context.closePath();
+          context.fill();
+        };
+        this.move = function () {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          this.r -= 0.1;
+        };
+      }
+      function expRect(x, y, r, c) {
+        this.x = x;
+        this.y = y;
+        this.r = r;
+        this.c = c;
+        this.speedX = randomSpeed();
+        this.speedY = randomSpeed();
+        this.draw = function () {
+          context.fillStyle = this.c;
+          context.fillRect(this.x, this.y, this.r, this.r);
+        };
+        this.move = function () {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          this.r -= 0.1;
+        };
+      }
+      function Explosion(x, y) {
+        this.x = x;
+        this.y = y;
+        this.parts = [];
+        this.partsQC = 20;
+        this.partsQR = 10;
+        this.fade = false;
+        for (q = 0; q < this.partsQC; q += 1) {
+          this.parts.push(
+            new expCircle(this.x, this.y, randomR(5, 10), randomExpColor())
+          );
+        }
+        for (q = 0; q < this.partsQR; q += 1) {
+          this.parts.push(
+            new expRect(this.x, this.y, randomR(3, 5), randomExpColor())
+          );
+        }
+        this.draw = function () {
+          for (q = this.parts.length - 1; q >= 0; q -= 1) {
+            if (this.parts[q].r <= 0) {
+              this.parts.splice(q, 1);
+            }
+          }
+          for (q = 0; q < this.parts.length; q += 1) {
+            this.parts[q].draw();
+            this.parts[q].move();
+          }
+          if (this.parts.length == 0) {
+            this.fade = true;
+            return;
+          }
+        };
+      }
+      function Flash(x, y) {
+        this.x = x;
+        this.y = y;
+        this.parts = [];
+        this.partsQR = 10;
+        this.fade = false;
+        for (q = 0; q < this.partsQR; q += 1) {
+          this.parts.push(
+            new expRect(this.x, this.y, randomR(5, 10), randomExpColor())
+          );
+        }
+        this.draw = function () {
+          for (q = this.parts.length - 1; q >= 0; q -= 1) {
+            if (this.parts[q].r <= 0) {
+              this.parts.splice(q, 1);
+            }
+          }
+          for (q = 0; q < this.parts.length; q += 1) {
+            this.parts[q].draw();
+            this.parts[q].move();
+          }
+          if (this.parts.length == 0) {
+            this.fade = true;
+            return;
+          }
+        };
+      }
+      var request = (function () {
+        return (
+          requestAnimationFrame ||
+          webkitRequestAmimationFrame ||
+          mozRequestAmimationFrame ||
+          oRequestAmimationFrame ||
+          msRequestAmimationFrame ||
+          function (callback) {
+            setTimeout(callback, 1e3 / 60);
+          }
+        );
+      })();
+      function startGame(callback) {
+        game = callback;
+        loop();
+      }
+      function loop() {
+        game();
+        request(loop);
+      }
+      function setStage(callback) {
+        game = callback;
+      }
+      function loadAudio(sources, volume) {
+        var audio = document.createElement("audio");
+        /*for (q = sources.length - 1; q >= 0; q -= 1) {
+			var source = document.createElement('source');
+			source.src = sources[q];
+			audio.appendChild(source);
+		}*/
+        audio.src = sources;
+        audio.volume = volume || 1;
+        var obj = {
+          node: false,
+          state: "stop",
+          play: function () {
+            this.node.currentTime = 0;
+            this.node.play();
+            this.state = "play";
+          },
+          pause: function () {
+            this.node.pause();
+            this.state = "pause";
+          },
+          stop: function () {
+            this.node.pause();
+            this.node.currentTime = 0;
+            this.state = "stop";
+          },
+          setVolume: function (volume) {
+            this.node.volume = volume;
+          },
+        };
+        obj.node = audio;
+        return obj;
+      }
+      function clicked(event) {
+        event.preventDefault();
+        var mouse = {
+          x: event.pageX,
+          y: event.pageY,
+        };
+        if (buttons.length != 0) {
+          for (q = 0; q < buttons.length; q += 1) {
+            buttons[q].handle(mouse);
+          }
+        } else {
+          var chanceToFire = Math.random();
+          if (chanceToFire > 0.9) {
+            var rocket = new Rocket(ship.grid.nodes[0].x, height - w * 3);
+            isFire = true;
+            if (shot) {
+              shot.play();
+            }
+            rockets.push(rocket);
+          }
+        }
+      }
+      var eventName = "mousedown";
+      canvas.addEventListener(eventName, clicked);
+      function keyUp(event) {
+        if (event.keyCode !== 38) {
+          ship.setDir(0);
+        }
+      }
+      function keyDown(event) {
+        if (event.keyCode == 39) {
+          ship.setDir(1);
+        } else if (event.keyCode == 37) {
+          ship.setDir(-1);
+        }
+      }
+      function motion(event) {
+        if (event && event.preventDefault) {
+          event.preventDefault();
+        }
+        var accel = event.accelerationIncludingGravity;
+        var X = accel.x;
+        if (buttons.length == 0) {
+          if (X > 0) {
+            ship.setDir(-1);
+          } else if (X < 0) {
+            ship.setDir(1);
+          } else {
+            ship.setDir(0);
+          }
+        }
+      }
+      if (window.DeviceMotionEvent) {
+        window.addEventListener("devicemotion", motion, false);
+      }
+      window.addEventListener("keyup", keyUp, false);
+      window.addEventListener("keydown", keyDown, false);
+      window.addEventListener("contextmenu", function (event) {
+        if (event && event.preventDefault) {
+          event.preventDefault();
+        }
+      });
+      canvas.addEventListener("touchmove", function (event) {
+        if (event && event.preventDefault) {
+          event.preventDefault();
+        }
+        if (event && event.stopPropagation) {
+          event.stopPropagation();
+        }
+        return false;
+      });
+      startGame(menu);
+      setTimeout(function () {
+        console.log(
+          "Tilt your device to move right and left.\n(Desktop: Right and left keyboard arrows).\nTap the screen to fire.\n(Desktop: Left mouse button).\n(IMPORTANT: There is a chance to not shoot, just continue fireing)."
+        );
+      }, 1e3);
+      ///...FPS
+      /*var fps = document.createElement('div');
+fps.style.position = 'fixed';
+fps.style.right = 0;
+fps.style.bottom = 0;
+fps.style.color = colors[14];
+fps.style.background = 'transparent';
+fps.style.font = '1.5em monospace';
+fps.style.zIndex = 1;
+document.getElementsByTagName('body')[0].appendChild(fps);
+let frameCount = function _fc(timeStart) {
+  let now = performance.now();
+  let duration = now - timeStart;
+  if(duration < 1E3){
+    _fc.counter++;   
+  } else {             
+    _fc.fps = _fc.counter;
+    _fc.counter = 0;
+    timeStart = now; 
+    //console.log(_fc.fps);
+    fps.textContent = _fc.fps;
+  }
+  requestAnimationFrame(() => frameCount(timeStart)); 
+}
+frameCount.counter = 0;
+frameCount.fps = 0;
+frameCount(performance.now());*/
+    </script>
+  </body>
+</html>
